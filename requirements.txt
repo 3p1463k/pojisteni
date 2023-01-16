@@ -1,0 +1,39 @@
+#api
+fastapi
+uvicorn
+
+#code cleaning
+pre-commit
+
+#template
+jinja2
+
+#static files
+aiofiles
+
+#file processing
+python-multipart
+
+#enviroment vars
+python-dotenv
+
+#database
+sqlalchemy
+psycopg2
+
+#email validation
+pydantic
+pydantic[email]
+
+#password hashing
+passlib[bcrypt]
+
+#testing
+pytest
+requests
+
+#jwt tokensw
+python-jose
+
+#deta cloud
+#deta
