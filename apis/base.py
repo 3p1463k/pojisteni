@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from apis.route_list import routes_list
 
 api_router = APIRouter()

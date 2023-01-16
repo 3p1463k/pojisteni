@@ -1,35 +1,40 @@
-from fastapi import APIRouter, HTTPException, Request, Form, Depends, status
-from fastapi.responses import HTMLResponse
-from fastapi import Response
-
-from fastapi.templating import Jinja2Templates
-
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from apis.utils import OAuth2PasswordBearerWithCookie
-
-from jose import JWTError, jwt, ExpiredSignatureError
-from schemas.tokens import Token
-from sqlalchemy.orm import Session
 from datetime import timedelta
 
-from db.session import get_db
-from core.hashing import Hasher
-from db.repository.login import najdi_pojistence_dle_emailu
-from core.security import create_access_token
+from fastapi import APIRouter
+from fastapi import Depends
+from fastapi import Form
+from fastapi import HTTPException
+from fastapi import Request
+from fastapi import Response
+from fastapi import status
+from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.templating import Jinja2Templates
+from jose import ExpiredSignatureError
+from jose import jwt
+from jose import JWTError
+from sqlalchemy.orm import Session
+
+from apis.utils import OAuth2PasswordBearerWithCookie
 from core.config import settings
+from core.hashing import Hasher
+from core.security import create_access_token
+from db.repository.login import najdi_pojistence_dle_emailu
+from db.session import get_db
+from schemas.tokens import Token
 
 
 login_router = APIRouter(prefix="", tags=["login-api"])
 templates = Jinja2Templates(directory="templates")
 
 
-
 def authenticate_user(email: str, password: str, db: Session):
 
     """Overime zda uzivatel exisuje"""
 
-    user = najdi_pojistence_dle_emailu(email=email , db=db)
-    #print(user)
+    user = najdi_pojistence_dle_emailu(email=email, db=db)
+    # print(user)
 
     if not user:
         return False
@@ -42,10 +47,9 @@ def authenticate_user(email: str, password: str, db: Session):
 
 @login_router.post("/login/token/", response_model=Token)
 def login_for_access_token(
-
-        response: Response,
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        db: Session= Depends(get_db)
+    response: Response,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
 ):
 
     user = authenticate_user(form_data.username, form_data.password, db)
@@ -60,17 +64,12 @@ def login_for_access_token(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     access_token = create_access_token(
-
         data={"sub": user.email}, expires_delta=access_token_expires
     )
 
     response.set_cookie(
-
-        key="access_token",
-        value=f"Bearer {access_token}",
-        httponly=True
-
-    )  #set HttpOnly cookie in response
+        key="access_token", value=f"Bearer {access_token}", httponly=True
+    )  # set HttpOnly cookie in response
 
     print(f"PRINTED FROM route_login.py {access_token}")
 
@@ -78,51 +77,44 @@ def login_for_access_token(
 
 
 oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login/token")
-#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/")
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/")
 
 
 def get_current_user_from_token(
-
-        token: str = Depends(oauth2_scheme),
-        db: Session=Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
 
     """Najdi uzivatele z tokenu"""
 
     credentials_exception = HTTPException(
-
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials - Nelze Overit"
-        )
-
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials - Nelze Overit",
+    )
 
     try:
         payload = jwt.decode(
-
-            token,
-            settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM]
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
 
         username: str = payload.get("sub")
 
-        #print("PRINTED FROM route_login.py username/email extracted is ", username)
+        # print("PRINTED FROM route_login.py username/email extracted is ", username)
 
         if username is None:
             raise credentials_exception
 
-
     except ExpiredSignatureError:
 
-        raise HTTPException(status_code=403, detail="Prihlaseni vyprselo - token has been expired")
-
+        raise HTTPException(
+            status_code=403, detail="Prihlaseni vyprselo - token has been expired"
+        )
 
     except JWTError as e:
         print(f"JWTError \n {e}")
-        #if e =
+        # if e =
         raise credentials_exception
 
-    user = najdi_pojistence_dle_emailu(email=username,db=db)
+    user = najdi_pojistence_dle_emailu(email=username, db=db)
 
     if user is None:
         raise credentials_exception

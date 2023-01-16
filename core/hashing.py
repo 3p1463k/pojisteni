@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-class Hasher():
+class Hasher:
 
     """Funkce pro overeni a zasiforvani hesla"""
 
