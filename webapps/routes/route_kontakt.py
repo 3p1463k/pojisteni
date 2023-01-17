@@ -11,15 +11,13 @@ from fastapi.templating import Jinja2Templates
 from pydantic.dataclasses import dataclass
 
 
-templates = Jinja2Templates(directory="templates")
-
 router = APIRouter(prefix="", tags=["webapp"], include_in_schema=True)
 
+templates = Jinja2Templates(directory="templates")
 
-@router.get("/")
-async def home(request: Request):
 
-    """Get request na zobrazeni domovske stranky"""
+@router.get("/kontakt/")
+async def kontakt(request: Request):
 
     context = {"request": request}
-    return templates.TemplateResponse("general_pages/homepage.html", context)
+    return templates.TemplateResponse("general_pages/kontakt.html", context)

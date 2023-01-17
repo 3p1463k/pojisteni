@@ -1,0 +1,58 @@
+{% extends "shared/base.html" %}
+{% block title %}
+  <title>KONTAKT</title>
+{% endblock %}
+{% block content %}
+<!-- Start Content -->
+  <div class="w3-container w3-padding-32">
+    <div class="w3-container">
+      {% for error in errors %}
+      <div class="w3-panel w3-pale-red w3-border w3-round">
+	       <h3>{{error}}</h3>
+      </div>
+          {% endfor %}
+      </div>
+      <div>
+        {% if msg %}
+        <div>
+          {{msg}}
+        </div>
+        {% endif %}
+      </div>
+
+
+
+
+<div id="contact" class="w3-container w3-center w3-padding-32">
+<h2 class="w3-wide">KONTAKT</h2>
+PRAHA, CZ<br>
+Phone: +00 151515<br>
+Email: nejlepsi@pojisteni.com<br>
+<p class="w3-opacity w3-center"><i>Poterbujete pomoc? Napiste nam</i></p>
+
+<form action="/action_page.php" target="_blank">
+<input class="w3-input" type="text" placeholder="Name" required name="Name">
+<input class="w3-input" type="text" placeholder="Email" required name="Email">
+<input class="w3-input" type="text" placeholder="Message" required name="Message">
+<br>
+<button class="w3-button w3-black" type="submit">ODESLAT</button>
+</form>
+<br>
+
+<div class="w3-container w3-center w3-padding-32">
+
+<div style="width: 100%">
+  <iframe width="100%"
+	  height="600"
+	  frameborder="0"
+	  scrolling="no"
+	  marginheight="0"
+	  marginwidth="0"
+	  src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=prague+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+    <a href="https://www.maps.ie/distance-area-calculator.html">distance maps</a></iframe>
+</div>
+</div>
+  </div>
+</div>
+<!-- End Content -->
+{% endblock %}
