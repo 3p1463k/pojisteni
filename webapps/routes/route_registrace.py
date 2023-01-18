@@ -67,8 +67,6 @@ async def registrace(request: Request, db: Session = Depends(get_db)):
                 status_code=status.HTTP_302_FOUND,
             )
 
-            # response = templates.TemplateResponse("ucet/uzivatel.html", form.__dict__)
-
         except IntegrityError:
 
             form.__dict__.get("errors").append("Duplicate username or email")

@@ -1,0 +1,51 @@
+{% extends "shared/base_ucet.html" %}
+{% block title %}
+  <title>MUJ UCET</title>
+{% endblock %}
+
+{% block content %}
+  <!-- Start Content -->
+  <div class="w3-container w3-center">
+    {% if msg %}
+    <div
+      class= "w3-panel w3-pale-green w3-border w3-round w3-display-container">
+      <span onclick="this.parentElement.style.display='none'"
+	    class="w3-button w3-large w3-display-topright">×</span>
+
+      <h3>{{msg}}</h3>
+    </div>
+    {% endif %}
+  </div>
+
+
+  <div class="w3-container w3-padding">
+    <h1 class="w3-center w3-padding-16">Muj ucet</h1>
+  </div>
+
+  <div class="w3-container w3-center">
+    <div class="w3-row">
+      <div class="w3-half w3-container">
+        <h2 class="w3-padding">
+          <a href="/uzivatel/pojisteni/"class="nounderline">Moje pojisteni</a></h2>
+          {% for x in moje_pojisteni%}
+        <h5 class="w3-padding w3-text-green">
+          <a href="/pojisteni/zobraz/{{x.id}}"class="nounderline">
+            <b>{{x.nazev}}</b>
+            cena: {{x.cena}}</a></h5>
+           {% endfor %}
+           <hr>
+        <h2 class="w3-padding">
+          <a href="/uzivatel/udalosti/"class="nounderline">Moje udalosti</a></h2>
+          {% for x in moje_udalosti%}
+            <h6 class="w3-text-red"><b>{{x.nazev}}</b>  skoda: {{x.skoda}}</h6>
+           {% endfor %}
+      </div>
+
+      <div class="w3-half w3-container">
+          <img src="/static/img/flat/user1.png"
+               alt="Family"
+               style="width:50%">
+      </div>
+    </div>
+  </div>
+{% endblock %}
