@@ -36,8 +36,6 @@ async def login(request: Request, db: Session = Depends(get_db)):
     form = LoginForm(request)
     await form.load_data()
 
-    # print(f'{form.username} PRINTED from route_login.py')
-
     if await form.is_valid():
 
         try:

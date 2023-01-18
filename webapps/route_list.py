@@ -6,5 +6,7 @@ routes_list = [
     route_about.router,
     route_registrace.router,
     route_login.router,
+    route_logout.router,
     route_ucet.router,
+    route_zalozit_pojisteni.router,
 ]
