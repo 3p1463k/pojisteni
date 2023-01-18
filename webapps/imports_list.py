@@ -6,3 +6,4 @@ from webapps.routes import route_kontakt
 from webapps.routes import route_registrace
 from webapps.routes import route_ucet
 from webapps.routes import route_zalozit_pojisteni
+from webapps.routes import route_zalozit_udalost

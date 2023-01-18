@@ -34,7 +34,6 @@ def authenticate_user(email: str, password: str, db: Session):
     """Overime zda uzivatel exisuje"""
 
     user = najdi_pojistence_dle_emailu(email=email, db=db)
-    # print(user)
 
     if not user:
         return False
@@ -84,7 +83,7 @@ def get_current_user_from_token(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
 
-    """Najdi uzivatele z tokenu"""
+    """Najdi uzivatele podle tokenu"""
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -111,7 +110,6 @@ def get_current_user_from_token(
 
     except JWTError as e:
         print(f"JWTError \n {e}")
-        # if e =
         raise credentials_exception
 
     user = najdi_pojistence_dle_emailu(email=username, db=db)

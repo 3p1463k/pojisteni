@@ -9,7 +9,7 @@
       <h2>Moje udalosti</h2>
 
       {% for x in moje_udalosti%}
-      <h6>{{x.nazev}}</h6>
+      <h5 class="w3-text-red"><b>{{x.nazev}}</b></h5><h6>{{x.popis}} {{x.skoda}}</h6>
       {% endfor %}
   </div>
 

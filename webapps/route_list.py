@@ -9,4 +9,5 @@ routes_list = [
     route_logout.router,
     route_ucet.router,
     route_zalozit_pojisteni.router,
+    route_zalozit_udalost.router,
 ]
