@@ -70,8 +70,6 @@ def login_for_access_token(
         key="access_token", value=f"Bearer {access_token}", httponly=True
     )  # set HttpOnly cookie in response
 
-    print(f"PRINTED FROM route_login.py {access_token}")
-
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -96,8 +94,6 @@ def get_current_user_from_token(
         )
 
         username: str = payload.get("sub")
-
-        # print("PRINTED FROM route_login.py username/email extracted is ", username)
 
         if username is None:
             raise credentials_exception

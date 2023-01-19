@@ -62,45 +62,52 @@ async def zalozit_pojisteni(
 
     form = PojisteniForm(request)
     await form.load_data()
+    print(form.__dict__)
 
-    druh_pojisteni = db.query(Pojisteni).filter(Pojisteni.nazev == form.nazev).first()
+    if await form.is_valid():
 
-    """Zkontroluj jestli pojisteni jiz neexistuje"""
-
-    if (
-        db.query(Pojisteni)
-        .filter(Pojisteni.owner_id == current_user.id)
-        .filter(Pojisteni.nazev == form.nazev)
-        .first()
-    ):
-
-        # form.__dict__.get("errors").append("Toto jiz mate zalozeno")
-
-        form.__dict__.update(msg="Pojisteni jiz existuje")
-        print(form.__dict__["msg"])
-
-        response = responses.RedirectResponse(
-            url="/pojisteni/zalozit/?msg=Pojisteni-jiz-existuje",
-            status_code=status.HTTP_303_SEE_OTHER,
+        druh_pojisteni = (
+            db.query(Pojisteni).filter(Pojisteni.nazev == form.nazev).first()
         )
 
-        # return    form.__dict__["errors"]
-        return response
+        """Zkontroluj jestli pojisteni jiz neexistuje"""
 
-    else:
-        pojisteni = VytvorPojisteni(
-            nazev=druh_pojisteni.nazev,
-            popis=druh_pojisteni.popis,
-            cena=druh_pojisteni.cena,
-        )
+        if (
+            db.query(Pojisteni)
+            .filter(Pojisteni.owner_id == current_user.id)
+            .filter(Pojisteni.nazev == form.nazev)
+            .first()
+        ):
 
-        pojisteni = vytvor_nove_pojisteni(
-            pojisteni=pojisteni, db=db, owner_id=current_user.id
-        )
+            # form.__dict__.get("errors").append("Toto jiz mate zalozeno")
 
-        form.__dict__.update(msg="Pojisteni uspesne zalozeno")
+            form.__dict__.update(msg="Pojisteni jiz existuje")
+            print(form.__dict__["msg"])
 
-        return responses.RedirectResponse(
-            "/uzivatel?msg=Pojisteni-uspesne-zalozeno",
-            status_code=status.HTTP_302_FOUND,
-        )
+            response = responses.RedirectResponse(
+                url="/pojisteni/zalozit/?msg=Pojisteni-jiz-existuje",
+                status_code=status.HTTP_303_SEE_OTHER,
+            )
+
+            # return    form.__dict__["errors"]
+            return response
+
+        else:
+            pojisteni = VytvorPojisteni(
+                nazev=druh_pojisteni.nazev,
+                popis=druh_pojisteni.popis,
+                cena=druh_pojisteni.cena,
+            )
+
+            pojisteni = vytvor_nove_pojisteni(
+                pojisteni=pojisteni, db=db, owner_id=current_user.id
+            )
+
+            form.__dict__.update(msg="Pojisteni uspesne zalozeno")
+
+            return responses.RedirectResponse(
+                "/uzivatel?msg=Pojisteni-uspesne-zalozeno",
+                status_code=status.HTTP_302_FOUND,
+            )
+
+    return "NOK"

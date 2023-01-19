@@ -1,5 +1,6 @@
 # sql database
 *.db
+sql_pojisteni.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

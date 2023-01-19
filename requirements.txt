@@ -20,6 +20,7 @@ python-dotenv
 #database
 sqlalchemy
 psycopg2
+sqladmin
 
 #email validation
 pydantic
@@ -34,6 +35,8 @@ requests
 
 #jwt tokensw
 python-jose
+
+
 
 #deta cloud
 #deta
