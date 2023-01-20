@@ -16,6 +16,9 @@ class Pojistenec(Base):
 
     jmeno = Column(String, nullable=False)
     prijmeni = Column(String, nullable=False)
+
+    # fullname = column_property(jmeno + " " + prijmeni)
+
     ulice = Column(String, nullable=False)
     mesto = Column(String, nullable=False)
     psc = Column(Integer, nullable=False)
@@ -26,9 +29,48 @@ class Pojistenec(Base):
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
 
-    pojisteni = relationship("Pojisteni", back_populates="owner")
-    udalost = relationship("Udalost", back_populates="owner")
+    pojisteni = relationship(
+        "Pojisteni",
+        back_populates="pojistenec",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+
+    udalost = relationship(
+        "Udalost",
+        back_populates="pojistenec",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
 
     def __repr__(self):
 
         return f"{self.jmeno} {self.prijmeni}"
+
+
+#
+#
+# class Pojistenec(Base):
+#
+#     """Vytvorime model pojistence"""
+#
+#     id = Column(Integer, primary_key=True, index=True)
+#
+#     jmeno = Column(String, nullable=False)
+#     prijmeni = Column(String, nullable=False)
+#     ulice = Column(String, nullable=False)
+#     mesto = Column(String, nullable=False)
+#     psc = Column(Integer, nullable=False)
+#     telefon = Column(Integer, nullable=False)
+#     email = Column(String, nullable=False, unique=True, index=True)
+#
+#     hashed_password = Column(String, nullable=False)
+#     is_active = Column(Boolean(), default=True)
+#     is_superuser = Column(Boolean(), default=False)
+#
+#     pojisteni = relationship("Pojisteni", back_populates="owner")
+#     udalost = relationship("Udalost", back_populates="owner")
+#
+#     def __repr__(self):
+#
+#         return f"{self.jmeno} {self.prijmeni}"

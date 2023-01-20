@@ -14,7 +14,7 @@ from pydantic.dataclasses import dataclass
 
 templates = Jinja2Templates(directory="templates")
 
-router = APIRouter(prefix="", tags=["udalosti-webapp"], include_in_schema=False)
+router = APIRouter(prefix="", tags=["udalosti-webapp"], include_in_schema=True)
 
 
 @router.get("/udalosti/")

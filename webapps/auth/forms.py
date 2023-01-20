@@ -112,7 +112,7 @@ class PojisteniForm:
         self.popis = form.get("popis")
         self.cena = form.get("cena")
 
-        print(f"{self.__dict__}")
+        # print(f"PRINTED FORM forms.py  {self.__dict__}")
 
     async def is_valid(self):
 
@@ -120,6 +120,12 @@ class PojisteniForm:
 
         if not self.nazev:
             self.errors.append("Nazev is required")
+
+        if self.nazev == "Vyberte pojisteni":
+            self.errors.append("Vyberte pojisteni")
+
+        # if not self.popis:
+        #    self.errors.append("Popis is required")
 
         if not self.errors:
 
@@ -149,7 +155,7 @@ class UdalostForm:
         self.popis = form.get("popis")
         self.skoda = form.get("skoda")
 
-        print(f"{self.__dict__}")
+        # print(f"{self.__dict__}")
 
     async def is_valid(self):
 

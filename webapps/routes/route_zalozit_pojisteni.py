@@ -37,6 +37,7 @@ async def zaloz_pojisteni(
     request: Request,
     db: Session = Depends(get_db),
     current_user: Pojistenec = Depends(get_current_user_from_token),
+    msg: str = None,
 ):
 
     """Pojistenec si muze zalozit pojisteni ktera jsou k dispozici"""
@@ -80,16 +81,13 @@ async def zalozit_pojisteni(
         ):
 
             # form.__dict__.get("errors").append("Toto jiz mate zalozeno")
-
-            form.__dict__.update(msg="Pojisteni jiz existuje")
-            print(form.__dict__["msg"])
+            form.__dict__.update(msg="Pojisteni-jiz-existuje")
 
             response = responses.RedirectResponse(
-                url="/pojisteni/zalozit/?msg=Pojisteni-jiz-existuje",
+                url="/uzivatel?msg=Pojisteni-jiz-existuje",
                 status_code=status.HTTP_303_SEE_OTHER,
             )
 
-            # return    form.__dict__["errors"]
             return response
 
         else:

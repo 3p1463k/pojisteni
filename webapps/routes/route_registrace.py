@@ -20,11 +20,7 @@ from webapps.auth.forms import RegistraceForm
 
 templates = Jinja2Templates(directory="templates")
 
-router = APIRouter(
-    prefix="",
-    tags=["webapp"],
-    include_in_schema=False,
-)
+router = APIRouter(prefix="", tags=["webapp"], include_in_schema=False)
 
 
 @router.get("/registr/")

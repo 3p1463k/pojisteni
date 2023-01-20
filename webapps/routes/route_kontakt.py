@@ -11,7 +11,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic.dataclasses import dataclass
 
 
-router = APIRouter(prefix="", tags=["webapp"], include_in_schema=True)
+router = APIRouter(prefix="", tags=["webapp"], include_in_schema=False)
 
 templates = Jinja2Templates(directory="templates")
 

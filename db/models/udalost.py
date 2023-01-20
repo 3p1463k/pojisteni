@@ -20,9 +20,30 @@ class Udalost(Base):
     skoda = Column(Integer, nullable=False)
     datum_zalozeni = Column(Date)
 
-    owner_id = Column(Integer, ForeignKey("pojistenec.id"))
-    owner = relationship("Pojistenec", back_populates="udalost")
+    owner_id = Column(Integer, ForeignKey("pojistenec.id", ondelete="CASCADE"))
+
+    pojistenec = relationship("Pojistenec", back_populates="udalost")
 
     def __repr__(self):
 
-        return self.nazev
+        return f"{self.nazev}"
+
+
+#
+# class Udalost(Base):
+#
+#     """Vytvorime model pojistence"""
+#
+#     id = Column(Integer, primary_key=True, index=True)
+#
+#     nazev = Column(String, nullable=False)
+#     popis = Column(String, nullable=False)
+#     skoda = Column(Integer, nullable=False)
+#     datum_zalozeni = Column(Date)
+#
+#     owner_id = Column(Integer, ForeignKey("pojistenec.id"))
+#     owner = relationship("Pojistenec", back_populates="udalost")
+#
+#     def __repr__(self):
+#
+#         return self.nazev
