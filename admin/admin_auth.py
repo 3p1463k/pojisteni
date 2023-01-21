@@ -59,7 +59,7 @@ class AdminAuthBackend(AuthenticationBackend):
 
     async def authenticate(self, request: Request) -> bool:
 
-        """Na kazdy request v admin panelu zkontrolujeme token"""
+        """Overime token"""
         token = request.session.get("token")
 
         if not token:

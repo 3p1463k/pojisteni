@@ -1,11 +1,10 @@
 from sqladmin import Admin
 from sqladmin import ModelView
 
+from db.models.druh_pojisteni import DruhPojisteni
 from db.models.pojistenec import Pojistenec
 from db.models.pojisteni import Pojisteni
 from db.models.udalost import Udalost
-
-# from db.models.druh_pojisteni import DruhPojisteni
 
 
 class PojistenecAdmin(ModelView, model=Pojistenec):
@@ -66,6 +65,19 @@ class UdalostAdmin(ModelView, model=Udalost):
         Udalost.skoda,
         Udalost.owner_id,
         Udalost.datum_zalozeni,
+    ]
+
+
+class DruhPojisteniAdmin(ModelView, model=DruhPojisteni):
+
+    page_size = 25
+    icon = "fa-solid fa-pen"
+
+    column_list = [
+        Pojisteni.id,
+        Pojisteni.nazev,
+        Pojisteni.popis,
+        Pojisteni.cena,
     ]
 
 

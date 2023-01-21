@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from apis.version1.routes.route_login import login_for_access_token
+from db.models.druh_pojisteni import DruhPojisteni
 from db.models.pojistenec import Pojistenec
 from db.models.pojisteni import Pojisteni
 from db.repository.pojisteni import list_pojisteni
@@ -26,6 +27,9 @@ from schemas.pojisteni import VytvorPojisteni
 from schemas.pojisteni import ZobrazPojisteni
 from webapps.auth.forms import PojisteniForm
 
+# from deta import Deta
+
+# deta = Deta()
 
 templates = Jinja2Templates(directory="templates")
 
@@ -36,13 +40,12 @@ router = APIRouter(prefix="", tags=["zalozit-webapp"], include_in_schema=False)
 async def zaloz_pojisteni(
     request: Request,
     db: Session = Depends(get_db),
-    current_user: Pojistenec = Depends(get_current_user_from_token),
     msg: str = None,
+    error: str = None,
+    current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
 
-    """Pojistenec si muze zalozit pojisteni ktera jsou k dispozici"""
-
-    seznam_pojistek = db.query(Pojisteni).filter(Pojisteni.owner_id == 1)
+    seznam_pojistek = db.query(DruhPojisteni).all()
 
     context = {
         "request": request,
@@ -59,19 +62,15 @@ async def zalozit_pojisteni(
     db: Session = Depends(get_db),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-    """Nacti druh zvoleneho pojisteni"""
+    """Nacti druh zvoleneho pojisteni z formulare"""
 
     form = PojisteniForm(request)
     await form.load_data()
-    print(form.__dict__)
 
     if await form.is_valid():
 
-        druh_pojisteni = (
-            db.query(Pojisteni).filter(Pojisteni.nazev == form.nazev).first()
-        )
-
-        """Zkontroluj jestli pojisteni jiz neexistuje"""
+        # return "VALID FORM"
+        """Zkontroluj jestli pojistwni jiz neexistuje"""
 
         if (
             db.query(Pojisteni)
@@ -91,6 +90,12 @@ async def zalozit_pojisteni(
             return response
 
         else:
+            druh_pojisteni = (
+                db.query(DruhPojisteni)
+                .filter(DruhPojisteni.nazev == form.nazev)
+                .first()
+            )
+
             pojisteni = VytvorPojisteni(
                 nazev=druh_pojisteni.nazev,
                 popis=druh_pojisteni.popis,
@@ -108,4 +113,10 @@ async def zalozit_pojisteni(
                 status_code=status.HTTP_302_FOUND,
             )
 
-    return "NOK"
+    # print(form.__dict__["errors"])
+    # return "NOK"
+
+    return responses.RedirectResponse(
+        "/pojisteni/zalozit/?msg=Vyberte-pojisteni",
+        status_code=status.HTTP_302_FOUND,
+    )

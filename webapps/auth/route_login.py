@@ -31,7 +31,7 @@ def user_login(request: Request):
 @router.post("/login/")
 async def login(request: Request, db: Session = Depends(get_db)):
 
-    """Post request nacte data pro prihlaseni"""
+    """Nacteme formular pro prihlaseni"""
 
     form = LoginForm(request)
     await form.load_data()

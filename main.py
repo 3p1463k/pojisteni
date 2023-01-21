@@ -8,6 +8,7 @@ from sqladmin import Admin
 from sqladmin import ModelView
 
 from admin.admin_auth import AdminAuthBackend
+from admin.admin_config import DruhPojisteniAdmin
 from admin.admin_config import PojistenecAdmin
 from admin.admin_config import PojisteniAdmin
 from admin.admin_config import UdalostAdmin
@@ -15,6 +16,7 @@ from apis.base import api_router
 from core.config import settings
 from db.base import Base
 from db.session import engine
+from static.script.exceptions import exception_handlers
 from static.script.vytvor_polozky_db import over_admina
 from static.script.vytvor_polozky_db import vytvor_dummy_pojistence
 from static.script.vytvor_polozky_db import vytvor_dummy_pojisteni
@@ -52,7 +54,13 @@ def create_tables():
 
 def start_application():
 
-    app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
+    app = FastAPI(
+        title=settings.PROJECT_NAME,
+        version=settings.PROJECT_VERSION,
+        exception_handlers=exception_handlers,
+    )
+
+    # app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
 
     print("addding sqladmin to /admin")
     authentication_backend = AdminAuthBackend(secret_key=settings.SECRET_KEY)
@@ -65,6 +73,8 @@ def start_application():
     admin.add_view(PojistenecAdmin)
     admin.add_view(PojisteniAdmin)
     admin.add_view(UdalostAdmin)
+    admin.add_view(DruhPojisteniAdmin)
+
     # zadej_admina()
     # over_admina()
 
