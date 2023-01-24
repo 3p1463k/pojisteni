@@ -31,6 +31,9 @@ class ZobrazPojisteni(PojisteniBase):
     nazev: Optional[str] = None
     popis: Optional[str] = None
     cena: Optional[int] = None
+    owner_id: Optional[int] = None
+    id: int = None
+
     datum_zalozeni: Optional[date]
 
     class Config:
