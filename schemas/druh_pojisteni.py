@@ -23,13 +23,14 @@ class VytvorDruhPojisteni(DruhPojisteniBase):
     cena: Optional[int] = None
 
 
-class ZobrazDruhPojisteni(DruhPojisteniBase):
+class ZobrazDruhPojisteni(BaseModel):
 
-    """Zobrazeni pojisteni bez duvernych udaju"""
+    """Zobrazeni pojisteni bez citlivych udaju"""
 
     nazev: str
     popis: str
     cena: int
+    id: int
 
     class Config:
         orm_mode = True
@@ -42,7 +43,6 @@ class UpravDruhPojisteni(BaseModel):
     nazev: Optional[str] = None
     popis: Optional[str] = None
     cena: Optional[int] = None
-    datum_zalozeni: Optional[date]
 
     class Config:
         orm_mode = True
