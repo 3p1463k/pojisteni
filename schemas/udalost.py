@@ -12,6 +12,7 @@ class UdalostBase(BaseModel):
     nazev: Optional[str] = None
     popis: Optional[str] = None
     skoda: Optional[int] = None
+    owner_id: Optional[int] = None
     datum_zalozeni: Optional[date] = datetime.now().date()
 
 
@@ -22,15 +23,18 @@ class VytvorUdalost(UdalostBase):
     nazev: Optional[str] = None
     popis: Optional[str] = None
     skoda: Optional[int] = None
+    owner_id: Optional[int] = None
 
 
-class ZobrazUdalost(UdalostBase):
+class ZobrazUdalost(BaseModel):
 
     """Zobrazeni pojisteni bez duvernych udaju"""
 
     nazev: Optional[str] = None
     popis: Optional[str] = None
     skoda: Optional[int] = None
+    owner_id: Optional[int] = None
+    id: Optional[int] = None
     datum_zalozeni: Optional[date]
 
     class Config:
