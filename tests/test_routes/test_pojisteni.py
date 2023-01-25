@@ -14,7 +14,9 @@ def test_vytvor_pojisteni(client, normal_user_token_headers):
     }
 
     response = client.post(
-        "/pojisteni/vytvor/", json=data, headers=normal_user_token_headers
+        "/pojisteni/zaloz/",
+        json=data,
+        headers=normal_user_token_headers,
     )
 
     assert response.status_code == 200
@@ -29,12 +31,10 @@ def test_zobraz_pojisteni(client, normal_user_token_headers):
     }
 
     response = client.post(
-        "/pojisteni/vytvor/",
+        "/pojisteni/zaloz/",
         json=data,
         headers=normal_user_token_headers,
     )
-
-    # print(response.status_code)
 
     response = client.get("/pojisteni/1")
 
@@ -43,18 +43,18 @@ def test_zobraz_pojisteni(client, normal_user_token_headers):
 
 def test_zobraz_vse_pojisteni(client, normal_user_token_headers):
 
-    """TODO......."""
+    """Zobrazi vse pojisteni"""
 
     data = {"nazev": "Havarijni pojisteni", "popis": "Pojistuje auto", "cena": 1500}
 
     client.post(
-        "/pojisteni/vytvor/",
+        "/pojisteni/zaloz/",
         json=data,
         headers=normal_user_token_headers,
     )
 
     client.post(
-        "/pojisteni/vytvor/",
+        "/pojisteni/zaloz/",
         json=data,
         headers=normal_user_token_headers,
     )
@@ -68,7 +68,7 @@ def test_zobraz_vse_pojisteni(client, normal_user_token_headers):
 
 def test_uprava_pojisteni(client, normal_user_token_headers):
 
-    """TODO.........."""
+    """Jeno admin muze upravit, takze ocekavame HTTP_401_UNAUTHORIZED"""
 
     data = {
         "nazev": "Havarijni pojisteni EXTRA",
@@ -77,18 +77,26 @@ def test_uprava_pojisteni(client, normal_user_token_headers):
         "datum_zalozeni": "2023-01-03",
     }
 
-    client.post("/pojisteni/vytvor/", json=data)
+    client.post(
+        "/pojisteni/zaloz/",
+        json=data,
+        headers=normal_user_token_headers,
+    )
 
     data["nazev"] = "Test novy nazev"
 
-    response = client.put("/pojisteni/uprava/1", json=data)
+    response = client.put(
+        "/pojisteni/uprava/1",
+        json=data,
+        headers=normal_user_token_headers,
+    )
 
-    assert response.json()["msg"] == "Successfully updated data."
+    assert response.status_code == 401
 
 
 def test_vymaz_pojisteni(client, normal_user_token_headers):
 
-    """TODO........"""
+    """Vymaze pojisteni dle id"""
 
     data = {"nazev": "Havarijni pojisteni", "popis": "Pojistuje auto", "cena": 1500}
 

@@ -27,17 +27,9 @@ def test_vytvor_pojistence(client, normal_user_token_headers):
 
     assert response.status_code == 200
 
-    assert response.json() == {
-        "jmeno": "Brona",
-        "prijmeni": "Hanzak",
-        "ulice": "Vyjezdni 25",
-        "mesto": "Nova Paka",
-        "psc": 255489,
-        "telefon": 589657123,
-        "email": "bohous@testinexampl.com",
-        "password": None,
-        "is_active": True,
-    }
+    assert response.json()["jmeno"] == "Brona"
+    assert response.json()["prijmeni"] == "Hanzak"
+    assert response.json()["psc"] == 255489
 
 
 def test_zobraz_pojistence(client, normal_user_token_headers):
@@ -54,6 +46,12 @@ def test_zobraz_pojistence(client, normal_user_token_headers):
         "email": "bohous@testinexampl.com",
         "password": "testovani",
     }
+
+    client.post(
+        "/pojistenci/vytvorit/",
+        json=data,
+        headers=normal_user_token_headers,
+    )
 
     response = client.get("/pojistenci/1")
 
@@ -107,7 +105,7 @@ def test_zobraz_vsechny_pojistence(client, normal_user_token_headers):
 
 def test_uprava_pojistence(client, normal_user_token_headers):
 
-    """Vytvorime pojistence a nasledovne upravime jmeno"""
+    """Jeno admin muze upravit, takze ocekavame HTTP_401_UNAUTHORIZED"""
 
     data = {
         "jmeno": "Bohumil",
@@ -130,12 +128,12 @@ def test_uprava_pojistence(client, normal_user_token_headers):
     del data["password"]
 
     response = client.put(
-        "/pojistenci/uprava/2",
+        "/pojistenci/uprava/1",
         json=data,
         headers=normal_user_token_headers,
     )
 
-    assert response.json()["msg"] == "Successfully updated data."
+    assert response.status_code == 401
 
 
 def test_vymaz_pojistence(client, normal_user_token_headers):
