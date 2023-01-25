@@ -20,19 +20,15 @@ from db.repository.pojisteni import najdi_pojisteni
 from db.repository.pojisteni import uprav_pojisteni_dle_id
 from db.repository.pojisteni import vymaz_pojisteni_dle_id
 from db.repository.pojisteni import vytvor_nove_pojisteni
-from db.repository.pojisteni import zaloz_nove_pojisteni
+from db.repository.pojisteni import zaloz_nove_pojisteni_uzivatel
 from db.session import get_db
 from schemas.pojisteni import UpravPojisteni
 from schemas.pojisteni import VytvorPojisteni
 from schemas.pojisteni import ZobrazPojisteni
 from webapps.auth.forms import PojisteniForm
 
-# from deta import Deta
-
-# deta = Deta()
 
 templates = Jinja2Templates(directory="templates")
-
 router = APIRouter(prefix="", tags=["zalozit-webapp"], include_in_schema=False)
 
 
@@ -69,7 +65,6 @@ async def zalozit_pojisteni(
 
     if await form.is_valid():
 
-        # return "VALID FORM"
         """Zkontroluj jestli pojistwni jiz neexistuje"""
 
         if (
@@ -79,7 +74,6 @@ async def zalozit_pojisteni(
             .first()
         ):
 
-            # form.__dict__.get("errors").append("Toto jiz mate zalozeno")
             form.__dict__.update(msg="Pojisteni-jiz-existuje")
 
             response = responses.RedirectResponse(
@@ -102,7 +96,7 @@ async def zalozit_pojisteni(
                 cena=druh_pojisteni.cena,
             )
 
-            pojisteni = vytvor_nove_pojisteni(
+            pojisteni = zaloz_nove_pojisteni_uzivatel(
                 pojisteni=pojisteni, db=db, owner_id=current_user.id
             )
 
@@ -112,9 +106,6 @@ async def zalozit_pojisteni(
                 "/uzivatel?msg=Pojisteni-uspesne-zalozeno",
                 status_code=status.HTTP_302_FOUND,
             )
-
-    # print(form.__dict__["errors"])
-    # return "NOK"
 
     return responses.RedirectResponse(
         "/pojisteni/zalozit/?msg=Vyberte-pojisteni",

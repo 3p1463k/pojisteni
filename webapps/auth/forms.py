@@ -112,8 +112,6 @@ class PojisteniForm:
         self.popis = form.get("popis")
         self.cena = form.get("cena")
 
-        # print(f"PRINTED FORM forms.py  {self.__dict__}")
-
     async def is_valid(self):
 
         """TODO................."""
@@ -126,7 +124,6 @@ class PojisteniForm:
 
         # if not self.popis:
         #    self.errors.append("Popis is required")
-
         if not self.errors:
 
             return True
