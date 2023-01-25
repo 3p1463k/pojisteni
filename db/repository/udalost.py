@@ -8,8 +8,8 @@ from schemas.udalost import ZobrazUdalost
 def vytvor_novou_udalost(udalost: VytvorUdalost, db: Session, owner_id: int):
 
     """TDODO........"""
+    udalost_object = Udalost(**udalost.dict(exclude={"owner_id"}), owner_id=owner_id)
 
-    udalost_object = Udalost(**udalost.dict(), owner_id=owner_id)
     db.add(udalost_object)
     db.commit()
     db.refresh(udalost_object)
@@ -25,15 +25,15 @@ def najdi_udalost(id: int, db: Session):
     return item
 
 
-def list_udalosti(db: Session):
+def list_udalosti(db: Session) -> list[dict]:
 
     """TODO......."""
 
-    udalosti = db.query(Udalosti).all()
+    udalosti = db.query(Udalost).all()
     return udalosti
 
 
-def uprav_udalost_dle_id(id: int, udalost: VytvorUdalost, db: Session):
+def uprav_udalost_dle_id(id: int, udalost: VytvorUdalost, db: Session) -> bool:
 
     """TODO............"""
 
@@ -47,7 +47,7 @@ def uprav_udalost_dle_id(id: int, udalost: VytvorUdalost, db: Session):
     return 1
 
 
-def vymaz_udalost_dle_id(id: int, db: Session):
+def vymaz_udalost_dle_id(id: int, db: Session) -> bool:
 
     """Vymaze pojisteni"""
 

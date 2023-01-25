@@ -39,11 +39,14 @@ def najdi_pojistence_dle_emailu(email: str, db: Session):
     return pojistenec
 
 
-def uprav_pojistence_dle_id(id: int, pojistenec: UpravPojistence, db: Session):
+def uprav_pojistence_dle_id(id: int, pojistenec: UpravPojistence, db: Session) -> bool:
 
     """Upravi pojistence dle id"""
 
     existing_pojistenec = db.query(Pojistenec).where(Pojistenec.id == id)
+
+    if not existing_pojistenec:
+        return 0
 
     payload = {k: v for k, v in pojistenec.__dict__.items() if v is not None and v != 0}
 
@@ -54,22 +57,8 @@ def uprav_pojistence_dle_id(id: int, pojistenec: UpravPojistence, db: Session):
 
         return 1
 
-    else:
-        return 0
-    #
-    # with db as session:
-    #
-    #     statement = select(Pojistenec).where(Pojistenec.id == id)
-    #     results = session.execute(statement)  #
-    #
-    #     print(results)
-    #
-    #     # db.commit()
-    #
-    #     return 1
 
-
-def vymaz_pojistence_dle_id(id: int, db: Session):
+def vymaz_pojistence_dle_id(id: int, db: Session) -> bool:
 
     """Vymaze pojistence"""
 
@@ -89,16 +78,13 @@ def najdi_pojistence(id: int, db: Session):
 
     existing_pojistenec = db.query(Pojistenec).get(id)
 
-    print(f"ID je : { id}")
-    print(existing_pojistenec)
-
-    # if not existing_pojistenec.first():
-    #   return 0
+    if not existing_pojistenec:
+        return 0
 
     return existing_pojistenec
 
 
-def list_pojistence(db: Session):
+def list_pojistence(db: Session) -> list[dict]:
 
     """TODO......."""
 

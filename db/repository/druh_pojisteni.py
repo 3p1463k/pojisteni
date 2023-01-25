@@ -9,7 +9,6 @@ from schemas.druh_pojisteni import ZobrazDruhPojisteni
 def vytvor_novy_druh_pojisteni(
     druh_pojisteni: VytvorDruhPojisteni,
     db: Session,
-    # owner_id: int
 ):
 
     """Vytvori novy druh pojisteni"""
@@ -24,15 +23,15 @@ def vytvor_novy_druh_pojisteni(
 
 def najdi_druh_pojisteni(id: int, db: Session):
 
-    """TODO......."""
+    """Vthleda druh pojisteni dle id"""
 
     item = db.query(DruhPojisteni).filter(DruhPojisteni.id == id).first()
     return item
 
 
-def list_druh_pojisteni(db: Session):
+def list_druh_pojisteni(db: Session) -> list[dict]:
 
-    """TODO......."""
+    """Vytvori seznam vsech dostupnych pojistenich"""
 
     druh_pojisteni = db.query(DruhPojisteni).all()
     return druh_pojisteni
@@ -40,7 +39,7 @@ def list_druh_pojisteni(db: Session):
 
 def zaloz_novy_druh_pojisteni(
     id: int, druh_pojisteni: UpravDruhPojisteni, db: Session, owner_id
-):
+) -> bool:
 
     """Upravit pojisteni podle id"""
 
@@ -60,7 +59,7 @@ def zaloz_novy_druh_pojisteni(
 
 def uprav_druh_pojisteni_dle_id(
     id: int, druh_pojisteni: UpravDruhPojisteni, db: Session, owner_id
-):
+) -> bool:
 
     """Upravit pojisteni podle id"""
 
@@ -70,19 +69,17 @@ def uprav_druh_pojisteni_dle_id(
         return 0
 
     """Nacteme json jako dictionary a vyfiltrujeme None"""
-    print(f"PRINTED FROM pojisteni.py {druh_pojisteni.__dict__}")
 
     payload = {k: v for k, v in druh_pojisteni.__dict__.items() if v is not None}
-    # print(payload)
 
     existing_pojisteni.update(payload)
     db.commit()
     return 1
 
 
-def vymaz_druh_pojisteni_dle_id(id: int, db: Session, owner_id: int):
+def vymaz_druh_pojisteni_dle_id(id: int, db: Session) -> bool:
 
-    """Vymaze pojisteni"""
+    """Vymaze druh pojisteni dle id"""
 
     existing_pojisteni = db.query(DruhPojisteni).filter(DruhPojisteni.id == id)
 
