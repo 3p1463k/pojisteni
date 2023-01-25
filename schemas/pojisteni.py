@@ -15,13 +15,27 @@ class PojisteniBase(BaseModel):
     datum_zalozeni: Optional[date] = datetime.now().date()
 
 
-class VytvorPojisteni(PojisteniBase):
+class VytvorPojisteni(BaseModel):
 
     """Atributy k validaci  pojisteni"""
 
     nazev: Optional[str] = None
     popis: Optional[str] = None
     cena: Optional[int] = None
+    datum_zalozeni: Optional[date] = datetime.now().date()
+
+
+class ZalozPojisteni(BaseModel):
+
+    """Atributy k validaci  pojisteni"""
+
+    nazev: Optional[str] = None
+    popis: Optional[str] = None
+    cena: Optional[int] = None
+    owner_id: int = None
+
+    class Config:
+        orm_mode = True
 
 
 class ZobrazPojisteni(PojisteniBase):
@@ -47,7 +61,6 @@ class UpravPojisteni(BaseModel):
     nazev: Optional[str] = None
     popis: Optional[str] = None
     cena: Optional[int] = None
-    datum_zalozeni: Optional[date]
 
     class Config:
         orm_mode = True

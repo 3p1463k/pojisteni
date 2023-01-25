@@ -22,14 +22,14 @@ class VytvorPojistence(PojistenecBase):
 
     """Atributy k vytvoreni  pojistence"""
 
-    jmeno: str
-    prijmeni: str
-    ulice: str
-    mesto: str
-    psc: int
-    telefon: int
-    email: EmailStr
-    password: str
+    jmeno: Optional[str] = None
+    prijmeni: Optional[str] = None
+    ulice: Optional[str] = None
+    mesto: Optional[str] = None
+    psc: Optional[int] = 0
+    telefon: Optional[int] = 0
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
 
 
 class UpravPojistence(BaseModel):
@@ -41,10 +41,9 @@ class UpravPojistence(BaseModel):
     psc: Optional[int] = 0
     telefon: Optional[int] = 0
     email: Optional[EmailStr] = None
-    password: Optional[str] = None
 
 
-class ZobrazPojistence(PojistenecBase):
+class ZobrazPojistence(BaseModel):
 
     """Zobrazeni pojistence bez duvernych udaju"""
 
@@ -55,6 +54,7 @@ class ZobrazPojistence(PojistenecBase):
     psc: int
     telefon: int
     email: EmailStr
+    id: int
     is_active: bool
 
     class Config:
