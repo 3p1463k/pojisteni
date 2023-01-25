@@ -1,17 +1,23 @@
 {% extends "shared/base.html" %}
 {% block title %}
-  <title>403</title>
+  <title>500</title>
 {% endblock %}
+
+
 {% block content %}
 <!-- Start Content -->
+
+
 <div class="w3-container">
+
+
+
     <div class="w3-row">
       <div class="w3-card-4 w3-round-large">
         <div class="w3-container w3-center">
-      <h1>Byli jste odhlaseni</h1>
-      <p>Vase prihlaseni vyprselo.</p>
-      <h2>{{detail}}</h2>
-
+      <h1>Neovereny pozadavak</h1>
+      <p>Vase prihlaseni vyprselo.Nebo nemate opravneni pro tento pozadavek
+      </p>
         </div>
 	 <div class="w3-container w3-center w3-padding-32">
     <div class="w3-row">
@@ -23,6 +29,7 @@
 
       </div>
     </div>
+
 </div>
 <!-- End Content -->
 {% endblock %}
