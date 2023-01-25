@@ -72,13 +72,13 @@ list_pojistencu = [
         password="dobreheslo",
     ),
     VytvorPojistence(
-        jmeno="Vrabel",
-        prijmeni="Zakaría ",
+        jmeno="Hanus",
+        prijmeni="Drtikol",
         ulice="Pod mostem 2",
         mesto="Nekde",
         psc=40321,
         telefon=1546547687,
-        email="vrabi@yolo.com",
+        email="drti@kol.com",
         password="heslo",
     ),
     VytvorPojistence(
@@ -102,8 +102,8 @@ list_pojistencu = [
         password="dobreheslo",
     ),
     VytvorPojistence(
-        jmeno="Bonifac",
-        prijmeni="Syrovatka",
+        jmeno="Servac",
+        prijmeni="Bonifac",
         ulice="Pod 55",
         mesto="Psaky",
         psc=454541,
@@ -113,7 +113,7 @@ list_pojistencu = [
     ),
     VytvorPojistence(
         jmeno="Venda",
-        prijmeni="Bumbrlik",
+        prijmeni="Picbumbac",
         ulice="Pekna 7",
         mesto="Galos",
         psc=43545,

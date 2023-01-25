@@ -13,12 +13,14 @@ async def not_found_error(request: Request, exc: HTTPException):
 
 
 async def internal_error(request: Request, exc: HTTPException):
+
     return templates.TemplateResponse(
         "errors/500.html", {"request": request}, status_code=500
     )
 
 
 async def expired_token_error(request: Request, exc: HTTPException):
+
     return templates.TemplateResponse(
         "errors/403.html", {"request": request}, status_code=403
     )
