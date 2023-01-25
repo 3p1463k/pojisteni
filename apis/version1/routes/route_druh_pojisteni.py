@@ -23,7 +23,6 @@ from schemas.druh_pojisteni import UpravDruhPojisteni
 from schemas.druh_pojisteni import VytvorDruhPojisteni
 from schemas.druh_pojisteni import ZobrazDruhPojisteni
 
-# deta = Deta()
 
 router = APIRouter(prefix="", tags=["pojisteni-druh-api"])
 templates = Jinja2Templates(directory="templates")
@@ -62,18 +61,11 @@ def vytvor_druh_pojisteni(
     db: Session = Depends(get_db),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
-    """Vytvori nove druh pojisteni TODOn admin rights only"""
-    # current_user_is_admin = db.is_superuser==True
-    # if current_user_is_admin:
-    #       do stuff
-
-    print(current_user.id)
+    """Vytvori druh pojisteni"""
 
     druh_pojisteni = vytvor_novy_druh_pojisteni(
         druh_pojisteni=druh_pojisteni,
         db=db,
-        # owner_id=current_user.id
     )
 
     return druh_pojisteni
@@ -86,7 +78,6 @@ def uprav_druh_pojisteni(
     db: Session = Depends(get_db),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """Uprava pojisteni"""
 
     druh_pojisteni1 = najdi_druh_pojisteni(id=id, db=db)
@@ -111,11 +102,9 @@ def vymaz_druh_pojisteni(
     db: Session = Depends(get_db),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """Vymaze pojisteni z databaze podle id"""
-    # current_user = 1
 
-    message = vymaz_druh_pojisteni_dle_id(id=id, db=db, owner_id=current_user.id)
+    message = vymaz_druh_pojisteni_dle_id(id=id, db=db)
 
     if not message:
         raise HTTPException(
@@ -123,15 +112,13 @@ def vymaz_druh_pojisteni(
             detail=f"Pojisteni s id {id} nenalezeno",
         )
 
-    #    print(current_user.id, current_user.is_superuser)
-
     if current_user and current_user.is_superuser:
 
-        vymaz_druh_pojisteni_dle_id(id=id, db=db, owner_id=current_user.id)
+        vymaz_druh_pojisteni_dle_id(id=id, db=db)
 
         return {"msg": "Successfully deleted."}
 
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"You are not permitted!!!!",
-        )
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )

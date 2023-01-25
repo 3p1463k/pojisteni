@@ -80,24 +80,27 @@ async def upravit_pojistence(
 
     """Uprava pojistence"""
 
-    pojistenec_existuje = najdi_pojistence(id=id, db=db)
+    if current_user.is_superuser:
 
-    if not pojistenec_existuje:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s id {id} neexistuje",
+        message = uprav_pojistence_dle_id(
+            id=id,
+            pojistenec=pojistenec,
+            db=db,
         )
 
-    message = uprav_pojistence_dle_id(
-        id=id,
-        pojistenec=pojistenec,
-        db=db,
-    )
+        if not message:
 
-    if message:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojistenec s id {id} neexistuje",
+            )
+
         return {"msg": "Successfully updated data."}
 
-    return {"msg": "Can't be a 0"}
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @pojistenci_router.delete("/pojistenci/vymazat/{id}")

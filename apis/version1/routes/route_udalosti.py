@@ -17,6 +17,7 @@ from db.repository.pojisteni import uprav_pojisteni_dle_id
 from db.repository.pojisteni import vymaz_pojisteni_dle_id
 from db.repository.udalost import list_udalosti
 from db.repository.udalost import najdi_udalost
+from db.repository.udalost import vymaz_udalost_dle_id
 from db.repository.udalost import vytvor_novou_udalost
 from db.session import get_db
 from schemas.udalost import VytvorUdalost
@@ -47,6 +48,16 @@ async def udalost(
     return udalost
 
 
+@router.get("/udalosti/vse/", response_model=List[ZobrazUdalost])
+def zobrazit_udalosti(db: Session = Depends(get_db)):
+
+    """Zobrazi vsechny udalosti"""
+
+    udalosti = list_udalosti(db=db)
+
+    return udalosti
+
+
 @router.post("/udalosti/vytvor/", response_model=ZobrazUdalost)
 async def vytvorit_udalost(
     udalost: VytvorUdalost,
@@ -56,7 +67,7 @@ async def vytvorit_udalost(
 
     """Vytvori novou udalost"""
 
-    udalost = vytvor_novou_udalost(udalost=udalost, db=db)
+    udalost = vytvor_novou_udalost(udalost=udalost, db=db, owner_id=current_user.id)
 
     return udalost
 
@@ -84,19 +95,18 @@ async def vymazat_udalost(
 
     """Vymaze udalost"""
 
-    message = vymaz_udalost_dle_id(id=id, db=db)
-
-    if not message:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojisteni s id {id} nenalezeno",
-        )
-
     print(current_user.id, current_user.is_superuser)
 
-    if current_user.is_superuser or current_user.id:
+    if current_user and current_user.is_superuser:
 
-        vymaz_udalost_dle_id(id=id, db=db, owner_id=current_user.id)
+        message = vymaz_udalost_dle_id(id=id, db=db)
+
+        if not message:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojisteni s id {id} nenalezeno",
+            )
 
         return {"msg": "Successfully deleted."}
 
