@@ -35,14 +35,16 @@ def list_udalosti(db: Session) -> list[dict]:
 
 def uprav_udalost_dle_id(id: int, udalost: VytvorUdalost, db: Session) -> bool:
 
-    """TODO............"""
+    """Pouze admin muze upravit udalost"""
 
-    existing_udalost = db.query(udalost).filter(udalost.id == id)
+    existing_udalost = db.query(Udalost).filter(Udalost.id == id)
 
     if not existing_udalost.first():
         return 0
 
-    existing_udalost.update(udalost.__dict__)
+    """Nacteme json jako dictionary a vyfiltrujeme None"""
+    payload = {k: v for k, v in udalost.__dict__.items() if v is not None}
+    existing_udalost.update(payload)
     db.commit()
     return 1
 
