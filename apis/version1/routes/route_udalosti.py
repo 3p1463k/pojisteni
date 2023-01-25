@@ -13,13 +13,13 @@ from sqlalchemy.orm import Session
 from apis.version1.routes.route_login import get_current_user_from_token
 from db.models.pojistenec import Pojistenec
 from db.models.udalost import Udalost
-from db.repository.pojisteni import uprav_pojisteni_dle_id
-from db.repository.pojisteni import vymaz_pojisteni_dle_id
 from db.repository.udalost import list_udalosti
 from db.repository.udalost import najdi_udalost
+from db.repository.udalost import uprav_udalost_dle_id
 from db.repository.udalost import vymaz_udalost_dle_id
 from db.repository.udalost import vytvor_novou_udalost
 from db.session import get_db
+from schemas.udalost import UpravUdalost
 from schemas.udalost import VytvorUdalost
 from schemas.udalost import ZobrazUdalost
 
@@ -33,7 +33,6 @@ async def udalost(
     id: int,
     db: Session = Depends(get_db),
 ):
-
     """Zobrazi udalost dle id"""
 
     udalost = najdi_udalost(id=id, db=db)
@@ -64,7 +63,6 @@ async def vytvorit_udalost(
     db: Session = Depends(get_db),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """Vytvori novou udalost"""
 
     udalost = vytvor_novou_udalost(udalost=udalost, db=db, owner_id=current_user.id)
@@ -72,14 +70,35 @@ async def vytvorit_udalost(
     return udalost
 
 
-@router.put("/udalosti/uprav/", response_model=ZobrazUdalost)
+@router.put("/udalosti/uprav/{id}")
 async def upravit_udalost(
-    udalost: VytvorUdalost,
+    id: int,
+    udalost: UpravUdalost,
     db: Session = Depends(get_db),
-    # current_user: Pojistenec = Depends(get_current_user_from_token),
+    current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """Upravi existujici udalost"""
+
+    if current_user and current_user.is_superuser:
+
+        message = uprav_udalost_dle_id(
+            id=id,
+            udalost=udalost,
+            db=db,
+        )
+
+        if not message:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Udalost s id {id} nenalezena",
+            )
+
+        return {"msg": "Successfully updated data."}
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail=f"You are not permitted!!!!"
+    )
 
     udalost = vytvor_novou_udalost(udalost=udalost, db=db)
 
