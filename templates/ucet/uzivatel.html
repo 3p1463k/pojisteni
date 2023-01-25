@@ -29,7 +29,7 @@
           <a href="/uzivatel/pojisteni/"class="nounderline">Moje pojisteni</a></h2>
           {% for x in moje_pojisteni%}
         <h5 class="w3-padding w3-text-green">
-          <a href="/pojisteni/zobraz/{{x.id}}"class="nounderline">
+          <a href="/uzivatel/pojisteni/{{x.id}}"class="nounderline">
             <b>{{x.nazev}}</b>
             cena: {{x.cena}}</a></h5>
            {% endfor %}
