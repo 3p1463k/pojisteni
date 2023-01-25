@@ -18,7 +18,7 @@ class UdalostBase(BaseModel):
 
 class VytvorUdalost(UdalostBase):
 
-    """Atributy k validaci  pojisteni"""
+    """Atributy k validaci  udalosti"""
 
     nazev: Optional[str] = None
     popis: Optional[str] = None
@@ -28,13 +28,26 @@ class VytvorUdalost(UdalostBase):
 
 class ZobrazUdalost(BaseModel):
 
-    """Zobrazeni pojisteni bez duvernych udaju"""
+    """Zobrazeni udalosti bez duvernych udaju"""
 
     nazev: Optional[str] = None
     popis: Optional[str] = None
     skoda: Optional[int] = None
     owner_id: Optional[int] = None
     id: Optional[int] = None
+    datum_zalozeni: Optional[date]
+
+    class Config:
+        orm_mode = True
+
+
+class UpravUdalost(BaseModel):
+
+    """Atributy pro upravu udalosti"""
+
+    nazev: Optional[str] = None
+    popis: Optional[str] = None
+    skoda: Optional[int] = None
     datum_zalozeni: Optional[date]
 
     class Config:
