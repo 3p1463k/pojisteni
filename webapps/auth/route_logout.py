@@ -21,7 +21,6 @@ def user_logout(
     request: Request,
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """TODO............"""
 
     context = {"request": request, "current_user": current_user}
@@ -32,12 +31,12 @@ def user_logout(
 @router.post("/logout/")
 async def logout(request: Request, response: Response):
 
-    """Odhlasi s uctu vymazanim cookie"""
-    response.delete_cookie("bearer")
-
-    print(response.status_code)
-    # return {"status":"success"}
+    """Odhlasi s uctu vymaze token"""
 
     context = {"request": request}
 
-    return templates.TemplateResponse("auth/login.html", context)
+    response = templates.TemplateResponse("auth/login.html", context)
+
+    response.delete_cookie("access_token")
+
+    return response
