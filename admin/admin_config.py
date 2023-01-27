@@ -43,7 +43,7 @@ class PojisteniAdmin(ModelView, model=Pojisteni):
         Pojisteni.nazev,
         Pojisteni.popis,
         Pojisteni.cena,
-        Pojisteni.owner_id,
+        Pojisteni.pojistenec_id,
         Pojisteni.datum_zalozeni,
     ]
 
@@ -63,7 +63,7 @@ class UdalostAdmin(ModelView, model=Udalost):
         Udalost.nazev,
         Udalost.popis,
         Udalost.skoda,
-        Udalost.owner_id,
+        Udalost.pojistenec_id,
         Udalost.datum_zalozeni,
     ]
 
