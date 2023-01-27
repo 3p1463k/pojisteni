@@ -20,7 +20,7 @@ class Udalost(Base):
     skoda = Column(Integer, nullable=False)
     datum_zalozeni = Column(Date)
 
-    owner_id = Column(Integer, ForeignKey("pojistenec.id", ondelete="CASCADE"))
+    pojistenec_id = Column(Integer, ForeignKey("pojistenec.id", ondelete="CASCADE"))
 
     pojistenec = relationship("Pojistenec", back_populates="udalost")
 
