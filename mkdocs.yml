@@ -1,5 +1,14 @@
-site_name: Pojisteni App
 
+# Project information
+site_name: Pojisteni App
+site_url: https://3p1463k.github.io/pojisteni/
+site_author: Evzen Ptacek
+
+# Repository
+repo_name: 3p1463k/pojisteni
+repo_url: https://3p1463k.github.io/pojisteni/
+
+# Configuration
 theme:
   name: material
 
