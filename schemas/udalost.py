@@ -1,54 +1,31 @@
-from datetime import date
-from datetime import datetime
+from typing import List
 from typing import Optional
 
-from pydantic import BaseModel
+from sqlmodel import Field
+from sqlmodel import SQLModel
 
-
-class UdalostBase(BaseModel):
-
-    """Spolecne atributy"""
-
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    skoda: Optional[int] = None
-    owner_id: Optional[int] = None
-    datum_zalozeni: Optional[date] = datetime.now().date()
+from db.models.udalost import Udalost
+from db.models.udalost import UdalostBase
 
 
 class VytvorUdalost(UdalostBase):
 
-    """Atributy k validaci  udalosti"""
+    """Atributy k validaci  pojisteni"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    skoda: Optional[int] = None
-    owner_id: Optional[int] = None
+    pass
 
 
-class ZobrazUdalost(BaseModel):
+class ZobrazUdalost(Udalost):
 
-    """Zobrazeni udalosti bez duvernych udaju"""
+    """Zobrazeni pojisteni bez duvernych udaju"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    skoda: Optional[int] = None
-    owner_id: Optional[int] = None
-    id: Optional[int] = None
-    datum_zalozeni: Optional[date]
-
-    class Config:
-        orm_mode = True
+    pass
 
 
-class UpravUdalost(BaseModel):
+class UpravUdalost(SQLModel):
 
-    """Atributy pro upravu udalosti"""
+    """Schema pro upravu pojisteni"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    skoda: Optional[int] = None
-    datum_zalozeni: Optional[date]
-
-    class Config:
-        orm_mode = True
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    cena: Optional[int] = Field(default=None)

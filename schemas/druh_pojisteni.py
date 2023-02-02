@@ -1,48 +1,33 @@
-from datetime import date
-from datetime import datetime
+from typing import List
 from typing import Optional
 
-from pydantic import BaseModel
+from sqlmodel import Field
+from sqlmodel import SQLModel
+
+from db.models.druh_pojisteni import DruhPojisteni
+from db.models.druh_pojisteni import DruhPojisteniBase
 
 
-class DruhPojisteniBase(BaseModel):
-
-    """Spolecne atributy"""
-
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-
-
-class VytvorDruhPojisteni(DruhPojisteniBase):
+class VytvorDruhPojisteni(SQLModel):
 
     """Atributy k validaci  pojisteni"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    cena: Optional[int] = Field(default=None)
 
 
-class ZobrazDruhPojisteni(BaseModel):
+class ZobrazDruhPojisteni(DruhPojisteni):
 
     """Zobrazeni pojisteni bez citlivych udaju"""
 
-    nazev: str
-    popis: str
-    cena: int
-    id: int
-
-    class Config:
-        orm_mode = True
+    pass
 
 
-class UpravDruhPojisteni(BaseModel):
+class UpravDruhPojisteni(SQLModel):
 
-    """Spolecne atributy"""
+    """Schema pro upravu pojisteni"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-
-    class Config:
-        orm_mode = True
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    cena: Optional[int] = Field(default=None)

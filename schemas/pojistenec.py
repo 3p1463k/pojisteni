@@ -1,51 +1,32 @@
+from typing import List
 from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import EmailStr
+from sqlmodel import Field
+from sqlmodel import SQLModel
+
+from db.models.pojistenec import Pojistenec
+from db.models.pojistenec import PojistenecBase
 
 
-class PojistenecBase(BaseModel):
+class VytvorPojistence(SQLModel):
 
-    """Base model"""
+    """Atributy k validaci vytvoreni  pojistence"""
 
-    jmeno: Optional[str] = None
-    prijmeni: Optional[str] = None
-    ulice: Optional[str] = None
-    mesto: Optional[str] = None
-    psc: Optional[int] = 0
-    telefon: Optional[int] = 0
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
-
-
-class VytvorPojistence(PojistenecBase):
-
-    """Atributy k vytvoreni  pojistence"""
-
-    jmeno: Optional[str] = None
-    prijmeni: Optional[str] = None
-    ulice: Optional[str] = None
-    mesto: Optional[str] = None
-    psc: Optional[int] = 0
-    telefon: Optional[int] = 0
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
+    jmeno: Optional[str] = Field(index=True)
+    prijmeni: Optional[str] = Field(default=None)
+    ulice: Optional[str] = Field(default=None)
+    mesto: Optional[str] = Field(default=None)
+    psc: Optional[int] = Field(default=None)
+    telefon: Optional[int] = Field(default=None)
+    email: Optional[EmailStr] = Field(default=None)
+    password: Optional[str] = Field(default=None)
 
 
-class UpravPojistence(BaseModel):
+class ZobrazPojistence(SQLModel):
 
-    jmeno: Optional[str] = None
-    prijmeni: Optional[str] = None
-    ulice: Optional[str] = None
-    mesto: Optional[str] = None
-    psc: Optional[int] = 0
-    telefon: Optional[int] = 0
-    email: Optional[EmailStr] = None
-
-
-class ZobrazPojistence(BaseModel):
-
-    """Zobrazeni pojistence bez duvernych udaju"""
+    """Zobrazeni pojistence bez hesla"""
 
     jmeno: str
     prijmeni: str
@@ -53,9 +34,18 @@ class ZobrazPojistence(BaseModel):
     mesto: str
     psc: int
     telefon: int
-    email: EmailStr
+    email: str
     id: int
-    is_active: bool
 
-    class Config:
-        orm_mode = True
+
+class UpravPojistence(SQLModel):
+
+    """Schema pro upravu pojistence"""
+
+    jmeno: Optional[str] = Field(index=True)
+    prijmeni: Optional[str] = Field(default=None)
+    ulice: Optional[str] = Field(default=None)
+    mesto: Optional[str] = Field(default=None)
+    psc: Optional[int] = Field(default=None)
+    telefon: Optional[int] = Field(default=None)
+    email: Optional[str] = Field(default=None)

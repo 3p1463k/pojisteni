@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
 
-class Token(BaseModel):
+class Token(SQLModel):
 
     """Token base model"""
 

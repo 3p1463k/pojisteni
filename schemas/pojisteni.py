@@ -1,66 +1,31 @@
-from datetime import date
-from datetime import datetime
+from typing import List
 from typing import Optional
 
-from pydantic import BaseModel
+from sqlmodel import Field
+from sqlmodel import SQLModel
+
+from db.models.pojisteni import Pojisteni
+from db.models.pojisteni import PojisteniBase
 
 
-class PojisteniBase(BaseModel):
-
-    """Spolecne atributy"""
-
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-    datum_zalozeni: Optional[date] = datetime.now().date()
-
-
-class VytvorPojisteni(BaseModel):
+class VytvorPojisteni(PojisteniBase):
 
     """Atributy k validaci  pojisteni"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-    datum_zalozeni: Optional[date] = datetime.now().date()
+    pass
 
 
-class ZalozPojisteni(BaseModel):
-
-    """Atributy k validaci  pojisteni"""
-
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-    owner_id: int = None
-
-    class Config:
-        orm_mode = True
-
-
-class ZobrazPojisteni(PojisteniBase):
+class ZobrazPojisteni(Pojisteni):
 
     """Zobrazeni pojisteni bez duvernych udaju"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-    owner_id: Optional[int] = None
-    id: int = None
-
-    datum_zalozeni: Optional[date]
-
-    class Config:
-        orm_mode = True
+    pass
 
 
-class UpravPojisteni(BaseModel):
+class UpravPojisteni(SQLModel):
 
-    """Spolecne atributy"""
+    """Schema pro upravu pojisteni"""
 
-    nazev: Optional[str] = None
-    popis: Optional[str] = None
-    cena: Optional[int] = None
-
-    class Config:
-        orm_mode = True
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    cena: Optional[int] = Field(default=None)
