@@ -79,19 +79,3 @@ class DruhPojisteniAdmin(ModelView, model=DruhPojisteni):
         Pojisteni.popis,
         Pojisteni.cena,
     ]
-
-
-#
-# class DruhPojisteniAdmin(ModelView, model=DruhPojisteni):
-#
-#     page_size = 25
-#
-#     column_list = [
-#
-#         Pojisteni.id,
-#         Pojisteni.nazev,
-#         Pojisteni.popis,
-#         Pojisteni.cena,
-#     ]
-#
-#
