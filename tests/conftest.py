@@ -1,97 +1,46 @@
-import os
-import sys
-from typing import Any
-from typing import Generator
-
 import pytest
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import sessionmaker
-
-
-# cests pro import z db a main.py
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from db.base import Base
-from db.session import get_db
-from apis.base import api_router
-from core.config import settings
+from sqlmodel import create_engine
+from sqlmodel import Session
+from sqlmodel import SQLModel
+from sqlmodel.pool import StaticPool
 from utils.users import authentication_token_from_email
 
-
-def start_application():
-
-    """Vytvorime instanci FASTAPI"""
-
-    app = FastAPI()
-    app.include_router(api_router)
-    return app
+from core.config import settings
+from db.session import get_session
+from main import app
 
 
-"""Vytvorime SQLite databazi pro testovani"""
+@pytest.fixture(name="session")
+def session_fixture():
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_db.db"
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+    SQLModel.metadata.create_all(engine)
 
-SessionTesting = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-@pytest.fixture(scope="function")
-def app() -> Generator[FastAPI, Any, None]:
-
-    """Vytvorime novou databazi pro kazdy novy test"""
-
-    Base.metadata.create_all(engine)  # Create the tables.
-    _app = start_application()
-    yield _app
-    Base.metadata.drop_all(engine)
+    with Session(engine) as session:
+        yield session
 
 
-@pytest.fixture(scope="function")
-def db_session(app: FastAPI) -> Generator[SessionTesting, Any, None]:
+@pytest.fixture(name="client")
+def client_fixture(session: Session):
+    def get_session_override():
+        return session
 
-    """Vytvorime session ........TODO"""
-
-    connection = engine.connect()
-    transaction = connection.begin()
-    session = SessionTesting(bind=connection)
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
+    app.dependency_overrides[get_session] = get_session_override
+    client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()
 
 
-@pytest.fixture(scope="function")
-def client(
-    app: FastAPI, db_session: SessionTesting
-) -> Generator[TestClient, Any, None]:
-
-    """Vytvorime FastAPI TestClient pouzijeme vlastni db_session"""
-
-    def _get_test_db():
-        try:
-            yield db_session
-        finally:
-            pass
-
-    """Pro test prepiseme dependency injection v nasich routes"""
-
-    app.dependency_overrides[get_db] = _get_test_db
-    with TestClient(app) as client:
-        yield client
-
-
-@pytest.fixture(scope="function")
-def normal_user_token_headers(client: TestClient, db_session: Session):
+@pytest.fixture(name="client")
+def normal_user_token_headers(client: TestClient, session: get_session):
 
     """Get a valid JWT token for request"""
 
     return authentication_token_from_email(
         client=client,
         email=settings.TEST_USER_EMAIL,
-        db=db_session,
+        session=session,
     )
