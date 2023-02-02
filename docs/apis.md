@@ -1,14 +1,38 @@
 # APIs
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 
-## APIs
+## Login
 
-* POST /login/token/
-* /pojisteni/pojisteni_id/
+* /login/token/
+
+## Druh pojisteni
+
+* /druh_pojisteni/vytvor/
+* /druh_pojisteni/pojisteni_id/
+* /druh_pojisteni/uprava/
+* /druh_pojisteni/vymazat/
+* /druh_pojisteni/vse/
+
+## Pojisteni
+
 * /pojisteni/vytvor/
-* OAuth2
-* JWT token
-* Http Cookie
-* Password Hashing
-* Material Docs
+* /pojisteni/pojisteni_id/
+* /pojisteni/uprava/
+* /pojisteni/vymazat/
+* /pojisteni/vse/
+
+## Pojistenec
+
+* /pojistenec/vytvor/
+* /pojistenec/pojistenec_id/
+* /pojistenec/uprava/
+* /pojistenec/vymazat/
+* /pojistenci/vse/
+
+## Udalost
+
+* /udalost/vytvor/
+* /udalost/udalost_id/
+* /udalost/uprava/
+* /udalost/vymazat/
+* /udalosti/vse/
