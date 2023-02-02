@@ -1,7 +1,7 @@
-# Project layout
+# Admin
 
 
-## Layout
+## Admin configuration
 
 
     mkdocs.yml    # The configuration file.

@@ -1,7 +1,7 @@
-# Project layout
+# Core
 
 
-## Layout
+## Core
 
 
     mkdocs.yml    # The configuration file.

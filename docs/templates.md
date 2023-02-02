@@ -1,7 +1,7 @@
-# Project layout
+# Templates
 
 
-## Layout
+## Templates
 
 
     mkdocs.yml    # The configuration file.

@@ -66,7 +66,7 @@ def get_pojistence(*, session: Session = Depends(get_session), pojistenec_id: in
     return pojistenec
 
 
-@router.patch("/pojistenci/uprava/{pojistenec_id}", response_model=ZobrazPojistence)
+@router.patch("/pojistenec/uprava/{pojistenec_id}", response_model=ZobrazPojistence)
 async def upravit_pojistence(
     pojistenec_id: int,
     pojistenec: UpravPojistence,
@@ -94,7 +94,7 @@ async def upravit_pojistence(
     )
 
 
-@router.delete("/pojistenci/vymazat/{pojistenec_id}")
+@router.delete("/pojistenec/vymazat/{pojistenec_id}")
 async def vymazat_pojistence(
     *,
     pojistenec_id: int,

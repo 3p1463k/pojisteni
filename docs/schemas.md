@@ -1,7 +1,7 @@
-# Project layout
+# Schemas
 
 
-## Layout
+## Schemas
 
 
     mkdocs.yml    # The configuration file.

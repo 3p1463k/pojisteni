@@ -4,18 +4,28 @@ site_name: Pojisteni App
 site_url: https://3p1463k.github.io/pojisteni/
 site_author: Evzen Ptacek
 
+
 # Repository
 repo_name: 3p1463k/pojisteni
 repo_url: https://github.com/3p1463k/pojisteni
+
 
 # Configuration
 theme:
   name: material
 
   features:
-    - header.autohide
-    - navigation.sections
     - navigation.footer
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.sections
+
+
+# Markdown extensions
+markdown_extensions:
+  - attr_list
+  - md_in_html
+
+
+# Extensions
+plugins:
+  - glightbox
+  - search

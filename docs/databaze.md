@@ -1,7 +1,7 @@
-# Project layout
+# Databaze
 
 
-## Layout
+## Databaze
 
 
     mkdocs.yml    # The configuration file.

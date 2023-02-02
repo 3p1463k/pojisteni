@@ -1,7 +1,7 @@
-# Project layout
+# Testing
 
 
-## Layout
+## Testing configuration
 
 
     mkdocs.yml    # The configuration file.
