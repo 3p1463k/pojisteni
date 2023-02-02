@@ -9,7 +9,7 @@ load_dotenv()
 
 class Settings:
 
-    PROJECT_NAME: str = "POJISTENI-API"
+    PROJECT_NAME: str = "POJISTENI-FASTAPI-SQLMODEL"
     PROJECT_VERSION: str = "1.0.0"
     # PROJECT_KEY = os.getenv("DETA_PROJECT_KEY")
 
@@ -24,7 +24,7 @@ class Settings:
 
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES = 60
     TEST_USER_EMAIL = "test@example.com"
 
 
