@@ -1,16 +1,4 @@
-body {font-family:"Times New Roman", serif; background-color: #FFFFFF ;}
 
 a.nounderline {text-decoration: none; }
 
 h1,h2,h3,h4,h5,h6 {font-family:serif; letter-spacing:3px}
-
-.zoom {
-  display: inline-block; /* this is needed for inline elements */
-  transition: transform 0.3s ease-in-out;
-}
-
-.zoom:hover {
-  transform: scale(1.4);
-}
-
-a.zoom

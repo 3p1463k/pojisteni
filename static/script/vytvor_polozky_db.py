@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi import Response
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from apis.version1.routes.route_login import login_for_access_token
@@ -8,9 +9,10 @@ from core.config import settings
 from db.models.druh_pojisteni import DruhPojisteni
 from db.models.pojistenec import Pojistenec
 from db.repository.admin import vytvor_admina
-from db.repository.druh_pojisteni import vytvor_novy_druh_pojisteni
-from db.repository.pojistenec import vytvor_noveho_pojistence
-from db.session import SessionLocal
+from db.repository.druh_pojisteni import create_druh_pojisteni
+from db.repository.pojistenec import create_pojistenec
+from db.repository.pojistenec import find_pojistenec
+from db.session import engine
 from schemas.pojistenec import UpravPojistence
 from schemas.pojistenec import VytvorPojistence
 from schemas.pojistenec import ZobrazPojistence
@@ -22,7 +24,7 @@ def zadej_admina():
 
     print(f"\n Vytvarim admin ucet \n")
 
-    with SessionLocal() as session:
+    with Session(engine) as session:
 
         pojistenec = VytvorPojistence(
             jmeno="Bohousek",
@@ -35,12 +37,14 @@ def zadej_admina():
             password="adminheslo",
         )
 
-        try:
-            pojistenec = vytvor_admina(pojistenec=pojistenec, db=SessionLocal())
+        admin_exixts = find_pojistenec(session, pojistenec_id=1)
 
-        except IntegrityError as e:
-            print(f"Polozka jiz existije \n {e.params[0:2]}")
+        if admin_exixts:
+            print(f"\n Polozka jiz existije: {admin_exixts.email}")
             pass
+
+        else:
+            pojistenec = vytvor_admina(pojistenec=pojistenec, session=session)
 
 
 def vytvor_dummy_pojistence():
@@ -50,13 +54,31 @@ def vytvor_dummy_pojistence():
     for x in list_pojistencu:
 
         try:
-            pojistenec = vytvor_noveho_pojistence(x, db=SessionLocal())
 
-            print(
-                f"Vytvarim fiktivni pojistence {pojistenec.jmeno} {pojistenec.prijmeni}"
-            )
+            with Session(engine) as session:
+
+                pojistenec_exists = (
+                    session.query(Pojistenec)
+                    .filter(Pojistenec.jmeno == x.jmeno)
+                    .first()
+                )
+
+                if pojistenec_exists:
+
+                    print(
+                        f"Polozka jiz existije  {pojistenec_exists.jmeno} {pojistenec_exists.prijmeni}"
+                    )
+                    pass
+
+                else:
+                    pojistenec = create_pojistenec(session, x)
+
+                    print(
+                        f"Vytvarim fiktivni pojistence {pojistenec.jmeno} {pojistenec.prijmeni}"
+                    )
 
         except IntegrityError as e:
+
             print(f"Polozka jiz existije  {e.params[0:2]}")
             pass
 
@@ -69,7 +91,7 @@ def vytvor_dummy_pojisteni():
 
         try:
 
-            with SessionLocal() as session:
+            with Session(engine) as session:
 
                 if (
                     session.query(DruhPojisteni)
@@ -77,16 +99,13 @@ def vytvor_dummy_pojisteni():
                     .first()
                 ):
 
-                    print(f"{x.nazev} jiz existuje")
+                    print(f"\n {x.nazev} jiz existuje")
 
                     pass
 
                 else:
 
-                    pojisteni = vytvor_novy_druh_pojisteni(
-                        x,
-                        db=SessionLocal(),
-                    )
+                    pojisteni = create_druh_pojisteni(session, x)
 
                     print(f"Vytvarim fiktivni pojisteni {pojisteni.nazev}")
 
@@ -110,7 +129,7 @@ def over_admina():
 
     print(f"\n Prihlasuji admina pro vytvoreni polozek \n")
 
-    with SessionLocal() as session:
+    with Session(engine) as session:
 
         pojistenec = (
             session.query(Pojistenec).filter(Pojistenec.email == username).first()
