@@ -1,0 +1,7 @@
+site_name: Pojisteni App
+
+theme:
+  name: material
+
+  features:
+    - navigation.sections
