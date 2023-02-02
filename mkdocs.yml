@@ -17,3 +17,5 @@ theme:
     - navigation.sections
     - navigation.footer
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
