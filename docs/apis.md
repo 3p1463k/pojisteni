@@ -36,7 +36,7 @@ Admin muze vytvorit, upravit, vymazat a zobrazit druh pojisteni.
     Pojistuje proti havarii
     1500
 
-#### Api paths pro druh pojisteni
+#### Api paths druh pojisteni
 
     /druh_pojisteni/vytvor/
     /druh_pojisteni/pojisteni_id/
@@ -103,7 +103,7 @@ Admin muze vytvorit, upravit, vymazat a zobrazit pojistence.
     email="Jan@example.com"
     password="silneheslo"
 
-#### Paths
+#### Api paths pojistenec
 
     * /pojistenec/vytvor/
     * /pojistenec/pojistenec_id/
@@ -126,7 +126,7 @@ Musi priradit id pojistence
     Skoda  : int
     pojistenec_id : int
 
-#### Priklad pojisteni
+#### Priklad udalosti
 
     Rozbita motorka
     Tukli ho u Kauflandu
