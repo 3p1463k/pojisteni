@@ -9,16 +9,16 @@ from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic.dataclasses import dataclass
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from db.models.pojistenec import Pojistenec
 from db.models.pojisteni import Pojisteni
 from db.models.udalost import Udalost
-from db.repository.pojistenec import najdi_pojistence
+from db.repository.pojistenec import find_pojistenec
+from db.repository.pojisteni import find_pojisteni
 from db.repository.pojisteni import list_pojisteni
-from db.repository.pojisteni import najdi_pojisteni
-from db.session import get_db
+from db.session import get_session
 from schemas.pojistenec import ZobrazPojistence
 from schemas.pojisteni import ZobrazPojisteni
 
@@ -30,14 +30,19 @@ router = APIRouter(prefix="", tags=["ucet-uzivatel"], include_in_schema=False)
 @router.get("/uzivatel/")
 async def pojistenci_ucet(
     request: Request,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     msg: str = None,
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
+    """Prihlasime uzivatele a nacteme jeho pojisteni a udalosti"""
 
-    moje_pojisteni = db.query(Pojisteni).filter(Pojisteni.owner_id == current_user.id)
+    moje_pojisteni = session.query(Pojisteni).filter(
+        Pojisteni.pojistenec_id == current_user.id
+    )
 
-    moje_udalosti = db.query(Udalost).filter(Udalost.owner_id == current_user.id)
+    moje_udalosti = session.query(Udalost).filter(
+        Udalost.pojistenec_id == current_user.id
+    )
 
     context = {
         "request": request,
@@ -53,12 +58,15 @@ async def pojistenci_ucet(
 @router.get("/uzivatel/udalosti/")
 async def ucet_udalosti(
     request: Request,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     msg: str = None,
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
+    """Uzivatel si muze zalozit udalost"""
 
-    moje_udalosti = db.query(Udalost).filter(Udalost.owner_id == current_user.id)
+    moje_udalosti = session.query(Udalost).filter(
+        Udalost.pojistenec_id == current_user.id
+    )
 
     context = {
         "request": request,
@@ -73,12 +81,15 @@ async def ucet_udalosti(
 @router.get("/uzivatel/pojisteni/")
 async def ucet_pojisteni(
     request: Request,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     msg: str = None,
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
+    """Uzivatel muze zalozit pojisteni"""
 
-    moje_pojisteni = db.query(Pojisteni).filter(Pojisteni.owner_id == current_user.id)
+    moje_pojisteni = session.query(Pojisteni).filter(
+        Pojisteni.pojistenec_id == current_user.id
+    )
 
     context = {
         "request": request,
@@ -90,16 +101,16 @@ async def ucet_pojisteni(
     return templates.TemplateResponse("ucet/pojisteni.html", context)
 
 
-@router.get("/uzivatel/pojisteni/{id}", response_model=ZobrazPojisteni)
+@router.get("/uzivatel/pojisteni/{pojisteni_id}", response_model=ZobrazPojisteni)
 def nacti_detail_pojisteni(
     request: Request,
-    id: int,
-    db: Session = Depends(get_db),
+    pojisteni_id: int,
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
     """Nacte detail jednotliveho pojisteni"""
 
-    pojisteni = najdi_pojisteni(id=id, db=db)
+    pojisteni = find_pojisteni(session, pojisteni_id)
 
     context = {
         "request": request,

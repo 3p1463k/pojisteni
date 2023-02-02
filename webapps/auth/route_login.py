@@ -7,12 +7,12 @@ from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import login_for_access_token
 from db.models.pojistenec import Pojistenec
 from db.repository.login import najdi_pojistence_dle_emailu
-from db.session import get_db
+from db.session import get_session
 from webapps.auth.forms import LoginForm
 
 
@@ -29,7 +29,7 @@ def user_login(request: Request):
 
 
 @router.post("/login/")
-async def login(request: Request, db: Session = Depends(get_db)):
+async def login(request: Request, session: Session = Depends(get_session)):
 
     """Nacteme formular pro prihlaseni"""
 
@@ -40,7 +40,9 @@ async def login(request: Request, db: Session = Depends(get_db)):
 
         try:
             email = str(form.username)
-            pojistenec = db.query(Pojistenec).filter(Pojistenec.email == email).first()
+            pojistenec = (
+                session.query(Pojistenec).filter(Pojistenec.email == email).first()
+            )
             # pojistenec = najdi_pojistence_dle_emailu(email, db)
             # print(pojistenec.is_superuser)
             if pojistenec and pojistenec.is_superuser:
@@ -52,7 +54,9 @@ async def login(request: Request, db: Session = Depends(get_db)):
                     status_code=status.HTTP_302_FOUND,
                 )
 
-                login_for_access_token(response=response, form_data=form, db=db)
+                login_for_access_token(
+                    response=response, form_data=form, session=session
+                )
 
                 return response
 
@@ -64,7 +68,9 @@ async def login(request: Request, db: Session = Depends(get_db)):
                     status_code=status.HTTP_302_FOUND,
                 )
 
-                login_for_access_token(response=response, form_data=form, db=db)
+                login_for_access_token(
+                    response=response, form_data=form, session=session
+                )
 
                 return response
 

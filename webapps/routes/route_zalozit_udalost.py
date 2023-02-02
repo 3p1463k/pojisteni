@@ -8,14 +8,14 @@ from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from apis.version1.routes.route_login import login_for_access_token
 from db.models.pojistenec import Pojistenec
 from db.models.udalost import Udalost
-from db.repository.udalost import vytvor_novou_udalost
-from db.session import get_db
+from db.repository.udalost import create_udalost_user
+from db.session import get_session
 from schemas.udalost import VytvorUdalost
 from webapps.auth.forms import UdalostForm
 
@@ -28,9 +28,10 @@ router = APIRouter(prefix="", tags=["udalost-zalozit-webapp"], include_in_schema
 @router.get("/udalost/zalozit/")
 async def zaloz_udalost(
     request: Request,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
+    """Uzivatel si muze zalozit udalost"""
 
     context = {"request": request, "current_user": current_user}
 
@@ -40,22 +41,25 @@ async def zaloz_udalost(
 @router.post("/udalost/zalozit/")
 async def zalozit_udalost(
     request: Request,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-    """Umoznime uzivateli vypsat novou udalost"""
+    """Nacteme novou udalost a ulozime do databaze"""
 
     form = UdalostForm(request)
     await form.load_data()
 
     if await form.is_valid():
 
-        udalost = VytvorUdalost(nazev=form.nazev, popis=form.popis, skoda=form.skoda)
+        udalost = VytvorUdalost(
+            nazev=form.nazev,
+            popis=form.popis,
+            skoda=form.skoda,
+            pojistenec_id=current_user.id,
+        )
 
         try:
-            udalost = vytvor_novou_udalost(
-                udalost=udalost, db=db, owner_id=current_user.id
-            )
+            udalost = create_udalost_user(session, udalost)
 
             return responses.RedirectResponse(
                 "/uzivatel?msg=Udalost-uspesne-zalozena",

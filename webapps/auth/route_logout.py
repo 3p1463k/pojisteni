@@ -4,11 +4,11 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi import Response
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from db.models.pojistenec import Pojistenec
-from db.session import get_db
+from db.session import get_session
 from webapps.auth.forms import LoginForm
 
 

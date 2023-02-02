@@ -8,11 +8,11 @@ from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import login_for_access_token
-from db.repository.pojistenec import vytvor_noveho_pojistence
-from db.session import get_db
+from db.repository.pojistenec import create_pojistenec
+from db.session import get_session
 from schemas.pojistenec import VytvorPojistence
 from schemas.pojistenec import ZobrazPojistence
 from webapps.auth.forms import RegistraceForm
@@ -26,7 +26,7 @@ router = APIRouter(prefix="", tags=["webapp"], include_in_schema=False)
 @router.get("/registr/")
 async def registrace(request: Request):
 
-    """GET request na zobrazeni formulare registrace"""
+    """Request na zobrazeni formulare registrace"""
 
     context = {"request": request}
 
@@ -34,9 +34,9 @@ async def registrace(request: Request):
 
 
 @router.post("/registr/")
-async def registrace(request: Request, db: Session = Depends(get_db)):
+async def registrace(request: Request, session: Session = Depends(get_session)):
 
-    """POST request na ulozeni formulare registrace"""
+    """Request na ulozeni formulare po ulozeni uzivatele prihlasime do uctu"""
 
     form = RegistraceForm(request)
     await form.load_data()
@@ -56,12 +56,26 @@ async def registrace(request: Request, db: Session = Depends(get_db)):
 
         try:
 
-            pojistenec = vytvor_noveho_pojistence(pojistenec=pojistenec, db=db)
+            pojistenec = create_pojistenec(pojistenec=pojistenec, session=session)
 
-            return responses.RedirectResponse(
+            response = responses.RedirectResponse(
                 "/uzivatel?msg=Registrace-byla-uspesna",
                 status_code=status.HTTP_302_FOUND,
             )
+
+            class MyForm:
+                def __init__(self, username, password):
+
+                    self.username = username
+                    self.password = password
+
+            username = form.email
+            password = form.password
+            myform = MyForm(username, password)
+
+            login_for_access_token(response=response, form_data=myform, session=session)
+
+            return response
 
         except IntegrityError:
 

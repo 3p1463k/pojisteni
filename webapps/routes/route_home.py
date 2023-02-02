@@ -22,4 +22,4 @@ async def home(request: Request):
     """Get request na zobrazeni domovske stranky"""
 
     context = {"request": request}
-    return templates.TemplateResponse("general_pages/homepage.html", context)
+    return templates.TemplateResponse("general_pages/home1.html", context)
