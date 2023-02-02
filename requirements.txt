@@ -18,9 +18,10 @@ python-multipart
 python-dotenv
 
 #database
-sqlalchemy
-psycopg2
+#sqlalchemy
+#psycopg2
 sqladmin
+sqlmodel
 
 #email validation
 pydantic
