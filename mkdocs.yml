@@ -6,7 +6,7 @@ site_author: Evzen Ptacek
 
 # Repository
 repo_name: 3p1463k/pojisteni
-repo_url: https://3p1463k.github.io/pojisteni/
+repo_url: https://github.io/3p1463k/pojisteni/
 
 # Configuration
 theme:
@@ -14,3 +14,4 @@ theme:
 
   features:
     - navigation.sections
+    - navigation.footer
