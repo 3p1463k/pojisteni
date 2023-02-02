@@ -1,63 +1,80 @@
-from sqlalchemy.orm import Session
+from sqlmodel import Field
+from sqlmodel import select
+from sqlmodel import Session
+from sqlmodel import SQLModel
 
-from db.models.udalost import Udalost
+from db.models.pojistenec import Pojistenec
+from db.models.pojisteni import Pojisteni
+from db.session import engine
+from schemas.udalost import Udalost
+from schemas.udalost import UpravUdalost
 from schemas.udalost import VytvorUdalost
-from schemas.udalost import ZobrazUdalost
 
 
-def vytvor_novou_udalost(udalost: VytvorUdalost, db: Session, owner_id: int):
+def create_udalost_admin(session: Session, udalost: VytvorUdalost):
 
-    """TDODO........"""
-    udalost_object = Udalost(**udalost.dict(exclude={"owner_id"}), owner_id=owner_id)
+    udalost = Udalost.from_orm(udalost)
+    session.add(udalost)
+    session.commit()
+    session.refresh(udalost)
 
-    db.add(udalost_object)
-    db.commit()
-    db.refresh(udalost_object)
-
-    return udalost_object
+    return udalost
 
 
-def najdi_udalost(id: int, db: Session):
+def create_udalost_user(session: Session, udalost: VytvorUdalost):
 
-    """TODO......."""
+    udalost = Udalost.from_orm(udalost)
+    session.add(udalost)
+    session.commit()
+    session.refresh(udalost)
 
-    item = db.query(Udalost).filter(Udalost.id == id).first()
-    return item
+    return udalost
 
 
-def list_udalosti(db: Session) -> list[dict]:
+def find_udalost(session: Session, udalost_id: int):
 
-    """TODO......."""
+    udalost = session.get(Udalost, udalost_id)
 
-    udalosti = db.query(Udalost).all()
+    if not udalost:
+        return 0
+
+    return udalost
+
+
+def update_udalost(session: Session, udalost_id: int, udalost: UpravUdalost):
+
+    existing_udalost = session.get(Udalost, udalost_id)
+
+    if not existing_udalost:
+        return 0
+
+    udalost_data = udalost.dict(exclude_unset=True)
+
+    for key, value in udalost_data.items():
+        setattr(existing_udalost, key, value)
+
+    session.add(existing_udalost)
+    session.commit()
+    session.refresh(existing_udalost)
+
+    return existing_udalost
+
+
+def delete_udalost(session: Session, udalost_id: int):
+
+    udalost = session.get(Udalost, udalost_id)
+
+    if not udalost:
+        return 0
+
+    session.delete(udalost)
+    session.commit()
+
+    return 1
+
+
+def list_udalosti(session: Session):
+
+    udalosti = session.exec(select(Udalost)).all()
+
     return udalosti
-
-
-def uprav_udalost_dle_id(id: int, udalost: VytvorUdalost, db: Session) -> bool:
-
-    """Pouze admin muze upravit udalost"""
-
-    existing_udalost = db.query(Udalost).filter(Udalost.id == id)
-
-    if not existing_udalost.first():
-        return 0
-
-    """Nacteme json jako dictionary a vyfiltrujeme None"""
-    payload = {k: v for k, v in udalost.__dict__.items() if v is not None}
-    existing_udalost.update(payload)
-    db.commit()
-    return 1
-
-
-def vymaz_udalost_dle_id(id: int, db: Session) -> bool:
-
-    """Vymaze pojisteni"""
-
-    existing_udalost = db.query(Udalost).filter(Udalost.id == id)
-
-    if not existing_udalost.first():
-        return 0
-
-    existing_udalost.delete(synchronize_session=False)
-    db.commit()
-    return 1

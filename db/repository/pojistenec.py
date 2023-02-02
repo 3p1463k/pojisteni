@@ -1,92 +1,78 @@
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlmodel import select
+from sqlmodel import Session
 
 from core.hashing import Hasher
 from db.models.pojistenec import Pojistenec
+from db.models.pojisteni import Pojisteni
+from db.session import engine
 from schemas.pojistenec import UpravPojistence
 from schemas.pojistenec import VytvorPojistence
 
 
-def vytvor_noveho_pojistence(pojistenec: VytvorPojistence, db: Session):
+def create_pojistenec(session: Session, pojistenec: VytvorPojistence):
 
-    pojistenec = Pojistenec(
-        jmeno=pojistenec.jmeno,
-        prijmeni=pojistenec.prijmeni,
-        ulice=pojistenec.ulice,
-        mesto=pojistenec.mesto,
-        psc=pojistenec.psc,
-        telefon=pojistenec.telefon,
-        email=pojistenec.email,
-        hashed_password=Hasher.get_password_hash(pojistenec.password),
-        is_active=True,
-        is_superuser=False,
-    )
+    pojistenec_data = pojistenec.dict()
+    hashed_password = Hasher.get_password_hash(pojistenec_data["password"])
+    pojistenec_data["hashed_password"] = hashed_password
+    del pojistenec_data["password"]
 
-    db.add(pojistenec)
-    db.commit()
-    db.refresh(pojistenec)
+    pojistenec1 = Pojistenec()
+
+    for key, value in pojistenec_data.items():
+        setattr(pojistenec1, key, value)
+
+    session.add(pojistenec1)
+    session.commit()
+    session.refresh(pojistenec1)
 
     return pojistenec
 
 
-def najdi_pojistence_dle_emailu(email: str, db: Session):
+def find_pojistenec(session: Session, pojistenec_id: int):
 
-    """Najde pojistence dle emailu"""
+    pojistenec = session.get(Pojistenec, pojistenec_id)
 
-    pojistenec = db.query(Pojistenec).filter(Pojistenec.email == email).first()
-    print(f"{pojistenec} PRINTED from repository pojistenec.py")
+    if not pojistenec:
+        return 0
 
     return pojistenec
 
 
-def uprav_pojistence_dle_id(id: int, pojistenec: UpravPojistence, db: Session) -> bool:
+def update_pojistence(
+    session: Session, pojistenec_id: int, pojistenec: UpravPojistence
+):
 
-    """Upravi pojistence dle id"""
-
-    existing_pojistenec = db.query(Pojistenec).where(Pojistenec.id == id)
-
-    if not existing_pojistenec:
-        return 0
-
-    payload = {k: v for k, v in pojistenec.__dict__.items() if v is not None and v != 0}
-
-    if payload:
-
-        existing_pojistenec.update(payload)
-        db.commit()
-
-        return 1
-
-
-def vymaz_pojistence_dle_id(id: int, db: Session) -> bool:
-
-    """Vymaze pojistence"""
-
-    existing_pojistenec = db.query(Pojistenec).filter(Pojistenec.id == id)
-
-    if not existing_pojistenec.first():
-        return 0
-
-    existing_pojistenec.delete()
-    db.commit()
-    return 1
-
-
-def najdi_pojistence(id: int, db: Session):
-
-    """Vymaze pojistence"""
-
-    existing_pojistenec = db.query(Pojistenec).get(id)
+    existing_pojistenec = session.get(Pojistenec, pojistenec_id)
 
     if not existing_pojistenec:
         return 0
 
+    pojistenec_data = pojistenec.dict(exclude_unset=True)
+    print(pojistenec_data)
+
+    for key, value in pojistenec_data.items():
+        setattr(existing_pojistenec, key, value)
+
+    session.add(existing_pojistenec)
+    session.commit()
+    session.refresh(existing_pojistenec)
     return existing_pojistenec
 
 
-def list_pojistence(db: Session) -> list[dict]:
+def delete_pojistence(session: Session, pojistenec_id: int):
 
-    """TODO......."""
+    pojistenec = session.get(Pojistenec, pojistenec_id)
 
-    pojistenci = db.query(Pojistenec).all()
+    if not pojistenec:
+        return 0
+
+    session.delete(pojistenec)
+    session.commit()
+    return {"ok": True}
+
+
+def list_pojistence(session):
+
+    pojistenci = session.exec(select(Pojistenec)).all()
+
     return pojistenci

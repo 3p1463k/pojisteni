@@ -1,91 +1,70 @@
-from sqlalchemy.orm import Session
+from sqlmodel import Field
+from sqlmodel import select
+from sqlmodel import Session
+from sqlmodel import SQLModel
 
 from db.models.druh_pojisteni import DruhPojisteni
+from db.models.pojistenec import Pojistenec
+from db.session import engine
 from schemas.druh_pojisteni import UpravDruhPojisteni
 from schemas.druh_pojisteni import VytvorDruhPojisteni
-from schemas.druh_pojisteni import ZobrazDruhPojisteni
 
 
-def vytvor_novy_druh_pojisteni(
-    druh_pojisteni: VytvorDruhPojisteni,
-    db: Session,
-):
+def create_druh_pojisteni(session: Session, druh_pojisteni: VytvorDruhPojisteni):
 
-    """Vytvori novy druh pojisteni"""
+    druh_pojisteni = DruhPojisteni.from_orm(druh_pojisteni)
+    print(druh_pojisteni)
+    session.add(druh_pojisteni)
+    session.commit()
+    session.refresh(druh_pojisteni)
 
-    druh_pojisteni_object = DruhPojisteni(**druh_pojisteni.dict())
-    db.add(druh_pojisteni_object)
-    db.commit()
-    db.refresh(druh_pojisteni_object)
-
-    return druh_pojisteni_object
-
-
-def najdi_druh_pojisteni(id: int, db: Session):
-
-    """Vthleda druh pojisteni dle id"""
-
-    item = db.query(DruhPojisteni).filter(DruhPojisteni.id == id).first()
-    return item
-
-
-def list_druh_pojisteni(db: Session) -> list[dict]:
-
-    """Vytvori seznam vsech dostupnych pojistenich"""
-
-    druh_pojisteni = db.query(DruhPojisteni).all()
     return druh_pojisteni
 
 
-def zaloz_novy_druh_pojisteni(
-    id: int, druh_pojisteni: UpravDruhPojisteni, db: Session, owner_id
-) -> bool:
+def find_druh_pojisteni(session: Session, druh_pojisteni_id: int):
 
-    """Upravit pojisteni podle id"""
+    druh_pojisteni = session.get(DruhPojisteni, druh_pojisteni_id)
 
-    existing_pojisteni = db.query(DruhPojisteni).filter(DruhPojisteni.id == id)
-
-    if not existing_pojisteni:
+    if not druh_pojisteni:
         return 0
 
-    """Nacteme json jako dictionary a vyfiltrujeme None"""
-    payload = {k: v for k, v in pojisteni.__dict__.items() if v is not None}
-    print(payload)
-
-    existing_pojisteni.update(payload)
-    db.commit()
-    return 1
+    return druh_pojisteni
 
 
-def uprav_druh_pojisteni_dle_id(
-    id: int, druh_pojisteni: UpravDruhPojisteni, db: Session, owner_id
-) -> bool:
+def update_druh_pojisteni(
+    session: Session, druh_pojisteni_id: int, druh_pojisteni: UpravDruhPojisteni
+):
 
-    """Upravit pojisteni podle id"""
+    existing_druh_pojisteni = session.get(DruhPojisteni, druh_pojisteni_id)
 
-    existing_pojisteni = db.query(DruhPojisteni).filter(DruhPojisteni.id == id)
-
-    if not existing_pojisteni:
+    if not existing_druh_pojisteni:
         return 0
 
-    """Nacteme json jako dictionary a vyfiltrujeme None"""
+    druh_pojisteni_data = druh_pojisteni.dict(exclude_unset=True)
 
-    payload = {k: v for k, v in druh_pojisteni.__dict__.items() if v is not None}
+    for key, value in druh_pojisteni_data.items():
+        setattr(existing_druh_pojisteni, key, value)
 
-    existing_pojisteni.update(payload)
-    db.commit()
-    return 1
+    session.add(existing_druh_pojisteni)
+    session.commit()
+    session.refresh(existing_druh_pojisteni)
+    return existing_druh_pojisteni
 
 
-def vymaz_druh_pojisteni_dle_id(id: int, db: Session) -> bool:
+def delete_druh_pojisteni(session: Session, druh_pojisteni_id: int):
 
-    """Vymaze druh pojisteni dle id"""
+    druh_pojisteni = session.get(DruhPojisteni, druh_pojisteni_id)
 
-    existing_pojisteni = db.query(DruhPojisteni).filter(DruhPojisteni.id == id)
-
-    if not existing_pojisteni:
+    if not druh_pojisteni:
         return 0
 
-    existing_pojisteni.delete(synchronize_session=False)
-    db.commit()
-    return 1
+    session.delete(druh_pojisteni)
+    session.commit()
+    return {"ok": True}
+
+
+def list_druhy_pojisteni(session):
+
+    druhy_pojisteni = session.exec(select(DruhPojisteni)).all()
+
+    return druhy_pojisteni

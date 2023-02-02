@@ -1,24 +1,22 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import Date
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy.orm import relationship
+from datetime import date
+from datetime import datetime
+from typing import List
+from typing import Optional
 
-from db.base_class import Base
+from sqlmodel import Field
+from sqlmodel import Relationship
+from sqlmodel import SQLModel
 
 
-class DruhPojisteni(Base):
+class DruhPojisteniBase(SQLModel):
 
-    """Vytvorime model druhu pojisteni"""
+    """Spolecne atributy"""
 
-    id = Column(Integer, primary_key=True, index=True)
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    cena: Optional[int] = Field(default=None)
 
-    nazev = Column(String, nullable=False)
-    popis = Column(String, nullable=False)
-    cena = Column(Integer, default=0)
 
-    def __repr__(self):
+class DruhPojisteni(DruhPojisteniBase, table=True):
 
-        return f"{self.nazev }"
+    id: Optional[int] = Field(default=None, primary_key=True)

@@ -1,28 +1,33 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import Date
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy.orm import relationship
+from datetime import date
+from datetime import datetime
+from typing import List
+from typing import Optional
 
-from db.base_class import Base
+from sqlmodel import Field
+from sqlmodel import Relationship
+from sqlmodel import SQLModel
 
 
-class Pojisteni(Base):
+class PojisteniBase(SQLModel):
 
-    """Vytvorime model pojisteni"""
+    """Spolecne atributy"""
 
-    id = Column(Integer, primary_key=True, index=True)
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    cena: Optional[int] = Field(default=None)
+    datum_zalozeni: Optional[date] = datetime.now().date()
 
-    nazev = Column(String, nullable=False)
-    popis = Column(String, nullable=False)
-    cena = Column(Integer, default=0)
-    datum_zalozeni = Column(Date)
+    pojistenec_id: Optional[int] = Field(default=None, foreign_key="pojistenec.id")
 
-    pojistenec_id = Column(Integer, ForeignKey("pojistenec.id", ondelete="CASCADE"))
+    def __repr__(self):
 
-    pojistenec = relationship("Pojistenec", back_populates="pojisteni")
+        return f"{self.nazev }"
+
+
+class Pojisteni(PojisteniBase, table=True):
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    pojistenec: Optional["Pojistenec"] = Relationship(back_populates="pojisteni")
 
     def __repr__(self):
 
@@ -30,20 +35,19 @@ class Pojisteni(Base):
 
 
 #
-# class Pojisteni(Base):
 #
-#     """Vytvorime model pojisteni"""
 #
-#     id = Column(Integer, primary_key=True, index=True)
+# class ZobrazPojisteni(Pojisteni):
 #
-#     nazev = Column(String, nullable=False)
-#     popis = Column(String, nullable=False)
-#     cena = Column(Integer, default=0)
-#     datum_zalozeni = Column(Date)
+#     """Zobrazeni pojisteni bez duvernych udaju"""
 #
-#     owner_id = Column(Integer, ForeignKey("pojistenec.id"))
-#     owner = relationship("Pojistenec", back_populates="pojisteni")
+#     nazev: Optional[str] = None
+#     popis: Optional[str] = None
+#     cena: Optional[int] = None
+#     pojistenec_id: Optional[int] = None
+#     id: int = None
 #
-#     def __repr__(self):
+#     datum_zalozeni: Optional[date]
 #
-#         return self.nazev
+#     class Config:
+#         orm_mode = True

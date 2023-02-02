@@ -1,99 +1,79 @@
-from sqlalchemy.orm import Session
+from sqlmodel import Field
+from sqlmodel import select
+from sqlmodel import Session
+from sqlmodel import SQLModel
 
+from db.models.pojistenec import Pojistenec
 from db.models.pojisteni import Pojisteni
+from db.session import engine
 from schemas.pojisteni import UpravPojisteni
 from schemas.pojisteni import VytvorPojisteni
-from schemas.pojisteni import ZobrazPojisteni
 
 
-def zaloz_nove_pojisteni_uzivatel(
-    pojisteni: VytvorPojisteni, db: Session, owner_id: int
-):
+def create_pojisteni_admin(session: Session, pojisteni: VytvorPojisteni):
 
-    """TDODO........"""
-    print(pojisteni)
-    print(owner_id)
+    pojisteni = Pojisteni.from_orm(pojisteni)
+    session.add(pojisteni)
+    session.commit()
+    session.refresh(pojisteni)
 
-    pojisteni_object = Pojisteni(**pojisteni.dict(), owner_id=owner_id)
-    db.add(pojisteni_object)
-    db.commit()
-    db.refresh(pojisteni_object)
-
-    return pojisteni_object
-
-
-def vytvor_nove_pojisteni(pojisteni: VytvorPojisteni, db: Session, owner_id: int):
-
-    """TDODO........"""
-
-    pojisteni_object = Pojisteni(**pojisteni.dict(), owner_id=owner_id)
-    db.add(pojisteni_object)
-    db.commit()
-    db.refresh(pojisteni_object)
-
-    return pojisteni_object
-
-
-def najdi_pojisteni(id: int, db: Session):
-
-    """TODO......."""
-
-    item = db.query(Pojisteni).filter(Pojisteni.id == id).first()
-    return item
-
-
-def list_pojisteni(db: Session) -> list[dict]:
-
-    """Vygeneruje seznam vsech pojisteni"""
-
-    pojisteni = db.query(Pojisteni).all()
     return pojisteni
 
 
-def zaloz_nove_pojisteni(id: int, pojisteni: UpravPojisteni, db: Session, owner_id):
+def create_pojisteni_user(session: Session, pojisteni: VytvorPojisteni):
 
-    """Upravit pojisteni podle id"""
+    pojisteni = Pojisteni.from_orm(pojisteni)
+    session.add(pojisteni)
+    session.commit()
+    session.refresh(pojisteni)
 
-    existing_pojisteni = db.query(Pojisteni).filter(Pojisteni.id == id)
+    return pojisteni
+
+
+def find_pojisteni(session: Session, pojisteni_id: int):
+
+    pojisteni = session.get(Pojisteni, pojisteni_id)
+
+    if not pojisteni:
+        return 0
+
+    return pojisteni
+
+
+def update_pojisteni(session: Session, pojisteni_id: int, pojisteni: UpravPojisteni):
+
+    existing_pojisteni = session.get(Pojisteni, pojisteni_id)
 
     if not existing_pojisteni:
         return 0
 
-    """Nacteme json jako dictionary a vyfiltrujeme None"""
-    payload = {k: v for k, v in pojisteni.__dict__.items() if v is not None}
+    pojisteni_data = pojisteni.dict(exclude_unset=True)
 
-    existing_pojisteni.update(payload)
-    db.commit()
-    return 1
+    for key, value in pojisteni_data.items():
+        setattr(existing_pojisteni, key, value)
+
+    session.add(existing_pojisteni)
+    session.commit()
+    session.refresh(existing_pojisteni)
+
+    return existing_pojisteni
 
 
-def uprav_pojisteni_dle_id(id: int, pojisteni: UpravPojisteni, db: Session):
+def delete_pojisteni(session: Session, pojisteni_id: int):
 
-    """Upravit pojisteni podle id"""
+    pojisteni = session.get(Pojisteni, pojisteni_id)
 
-    existing_pojisteni = db.query(Pojisteni).filter(Pojisteni.id == id)
-
-    if not existing_pojisteni:
+    if not pojisteni:
         return 0
 
-    """Nacteme json jako dictionary a vyfiltrujeme None"""
-    payload = {k: v for k, v in pojisteni.__dict__.items() if v is not None}
-    print(payload)
+    session.delete(pojisteni)
+    session.commit()
 
-    existing_pojisteni.update(payload)
-    db.commit()
     return 1
 
 
-def vymaz_pojisteni_dle_id(id: int, db: Session, owner_id):
+def list_pojisteni(session):
 
-    """Vymaze pojisteni"""
+    pojisteni = session.exec(select(Pojisteni)).all()
 
-    existing_pojisteni = db.query(Pojisteni).filter(Pojisteni.id == id)
-
-    if not existing_pojisteni:
-        return 0
-
-    existing_pojisteni.delete(synchronize_session=False)
-    db.commit()
-    return 1
+    return pojisteni

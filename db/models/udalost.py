@@ -1,49 +1,34 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import Date
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy.orm import relationship
+from datetime import date
+from datetime import datetime
+from typing import List
+from typing import Optional
 
-from db.base_class import Base
+from sqlmodel import Field
+from sqlmodel import Relationship
+from sqlmodel import SQLModel
 
 
-class Udalost(Base):
+class UdalostBase(SQLModel):
 
-    """Vytvorime model pojistence"""
+    """Spolecne atributy"""
 
-    id = Column(Integer, primary_key=True, index=True)
+    nazev: Optional[str] = Field(default=None)
+    popis: Optional[str] = Field(default=None)
+    skoda: Optional[int] = Field(default=None)
+    datum_zalozeni: Optional[date] = datetime.now().date()
 
-    nazev = Column(String, nullable=False)
-    popis = Column(String, nullable=False)
-    skoda = Column(Integer, nullable=False)
-    datum_zalozeni = Column(Date)
-
-    pojistenec_id = Column(Integer, ForeignKey("pojistenec.id", ondelete="CASCADE"))
-
-    pojistenec = relationship("Pojistenec", back_populates="udalost")
+    pojistenec_id: Optional[int] = Field(default=None, foreign_key="pojistenec.id")
 
     def __repr__(self):
 
-        return f"{self.nazev}"
+        return f"{self.nazev }"
 
 
-#
-# class Udalost(Base):
-#
-#     """Vytvorime model pojistence"""
-#
-#     id = Column(Integer, primary_key=True, index=True)
-#
-#     nazev = Column(String, nullable=False)
-#     popis = Column(String, nullable=False)
-#     skoda = Column(Integer, nullable=False)
-#     datum_zalozeni = Column(Date)
-#
-#     owner_id = Column(Integer, ForeignKey("pojistenec.id"))
-#     owner = relationship("Pojistenec", back_populates="udalost")
-#
-#     def __repr__(self):
-#
-#         return self.nazev
+class Udalost(UdalostBase, table=True):
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    pojistenec: "Pojistenec" = Relationship(back_populates="udalost")
+
+    def __repr__(self):
+
+        return f"{self.nazev }"

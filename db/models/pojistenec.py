@@ -1,76 +1,58 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy.orm import relationship
+from datetime import date
+from datetime import datetime
+from typing import List
+from typing import Optional
 
-from db.base_class import Base
+from pydantic import EmailStr
+from sqlmodel import Field
+from sqlmodel import Relationship
+from sqlmodel import SQLModel
 
 
-class Pojistenec(Base):
+class PojistenecBase(SQLModel):
 
-    """Vytvorime model pojistence"""
+    """Base model"""
 
-    id = Column(Integer, primary_key=True, index=True)
+    jmeno: Optional[str] = Field(index=True)
+    prijmeni: Optional[str] = Field(default=None)
+    ulice: Optional[str] = Field(default=None)
+    mesto: Optional[str] = Field(default=None)
+    psc: Optional[int] = Field(default=None)
+    telefon: Optional[int] = Field(default=None)
+    email: Optional[EmailStr] = Field(default=None)
+    hashed_password: Optional[str] = Field(default=None)
 
-    jmeno = Column(String, nullable=False)
-    prijmeni = Column(String, nullable=False)
+    is_active: Optional[bool] = Field(default=True)
+    is_superuser: Optional[bool] = Field(default=False)
 
-    # fullname = column_property(jmeno + " " + prijmeni)
+    def __repr__(self):
 
-    ulice = Column(String, nullable=False)
-    mesto = Column(String, nullable=False)
-    psc = Column(Integer, nullable=False)
-    telefon = Column(Integer, nullable=False)
-    email = Column(String, nullable=False, unique=True, index=True)
+        return f"{self.jmeno}"
 
-    hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean(), default=True)
-    is_superuser = Column(Boolean(), default=False)
 
-    pojisteni = relationship(
-        "Pojisteni",
-        back_populates="pojistenec",
-        cascade="all, delete",
-        passive_deletes=True,
+class Pojistenec(PojistenecBase, table=True):
+
+    """Model a relationship pro vytvoreni databaze"""
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    pojisteni: List["Pojisteni"] = Relationship(
+        back_populates="pojistenec", sa_relationship_kwargs={"cascade": "delete"}
     )
 
-    udalost = relationship(
-        "Udalost",
-        back_populates="pojistenec",
-        cascade="all, delete",
-        passive_deletes=True,
+    udalost: List["Udalost"] = Relationship(
+        back_populates="pojistenec", sa_relationship_kwargs={"cascade": "delete"}
     )
 
     def __repr__(self):
 
-        return f"{self.jmeno} {self.prijmeni}"
+        return f"{self.jmeno}"
 
 
-#
-#
-# class Pojistenec(Base):
-#
-#     """Vytvorime model pojistence"""
-#
-#     id = Column(Integer, primary_key=True, index=True)
-#
-#     jmeno = Column(String, nullable=False)
-#     prijmeni = Column(String, nullable=False)
-#     ulice = Column(String, nullable=False)
-#     mesto = Column(String, nullable=False)
-#     psc = Column(Integer, nullable=False)
-#     telefon = Column(Integer, nullable=False)
-#     email = Column(String, nullable=False, unique=True, index=True)
-#
-#     hashed_password = Column(String, nullable=False)
-#     is_active = Column(Boolean(), default=True)
-#     is_superuser = Column(Boolean(), default=False)
-#
-#     pojisteni = relationship("Pojisteni", back_populates="owner")
-#     udalost = relationship("Udalost", back_populates="owner")
-#
-#     def __repr__(self):
-#
-#         return f"{self.jmeno} {self.prijmeni}"
+class PojistenecOut(SQLModel):
+
+    """Zobrazeni bez hesla"""
+
+    jmeno: str
+    prijmeni: str
+    email: str
