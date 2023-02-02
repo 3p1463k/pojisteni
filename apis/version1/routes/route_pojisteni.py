@@ -8,110 +8,85 @@ from fastapi import Request
 from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from db.models.pojistenec import Pojistenec
 from db.models.pojisteni import Pojisteni
+from db.repository.pojisteni import (
+    create_pojisteni_admin,
+)  # , najdi_vse_pojisteni_pojistence
+from db.repository.pojisteni import delete_pojisteni
+from db.repository.pojisteni import find_pojisteni
 from db.repository.pojisteni import list_pojisteni
-from db.repository.pojisteni import najdi_pojisteni
-from db.repository.pojisteni import uprav_pojisteni_dle_id
-from db.repository.pojisteni import vymaz_pojisteni_dle_id
-from db.repository.pojisteni import vytvor_nove_pojisteni
-from db.repository.pojisteni import zaloz_nove_pojisteni_uzivatel
-from db.session import get_db
+from db.repository.pojisteni import update_pojisteni
+from db.session import get_session
+from schemas.pojistenec import VytvorPojistence
 from schemas.pojisteni import UpravPojisteni
 from schemas.pojisteni import VytvorPojisteni
-from schemas.pojisteni import ZalozPojisteni
 from schemas.pojisteni import ZobrazPojisteni
 
+#
 
-pojisteni_router = APIRouter(prefix="", tags=["pojisteni-api"])
+
+router = APIRouter(prefix="", tags=["pojisteni-api"])
 templates = Jinja2Templates(directory="templates")
 
 
-@pojisteni_router.get("/pojisteni/{id}", response_model=ZobrazPojisteni)
-def nacti_detail_pojisteni(id: int, db: Session = Depends(get_db)):
+@router.post("/pojisteni/vytvor/")
+def vytvor_pojisteni(
+    *,
+    session: Session = Depends(get_session),
+    pojisteni: VytvorPojisteni,
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
+    """Vytvori nove pojisteni TODOn admin rights only"""
 
+    if current_user and current_user.is_superuser:
+
+        pojisteni = create_pojisteni_admin(session, pojisteni)
+
+        return {"msg": "Pojisteni uspesne vytvoreno."}
+
+    raise HTTPException(
+        status_code=403, detail="Unauthorized - Nepovoleno, nemate opravneni"
+    )
+
+
+@router.get("/pojisteni/{pojisteni_id}", response_model=ZobrazPojisteni)
+def get_pojisteni(*, session: Session = Depends(get_session), pojisteni_id: int):
     """Nacte detail jednotliveho pojisteni"""
 
-    pojisteni = najdi_pojisteni(id=id, db=db)
+    pojisteni = find_pojisteni(session, pojisteni_id)
 
     if not pojisteni:
 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojisteni s  id {id} neexistuje",
+            detail=f"Pojisteni s  id {pojisteni_id} neexistuje",
         )
 
     return pojisteni
 
 
-@pojisteni_router.get("/pojisteni/vse/", response_model=List[ZobrazPojisteni])
-def zobrazit_dostupna_pojisteni(db: Session = Depends(get_db)):
-
-    """Zobrazi vsechna dostupna pojisteni"""
-
-    pojisteni = list_pojisteni(db=db)
-
-    return pojisteni
-
-
-@pojisteni_router.post("/pojisteni/zaloz/")
-def vytvor_pojisteni(
-    pojisteni: ZalozPojisteni,
-    db: Session = Depends(get_db),
-    current_user: Pojistenec = Depends(get_current_user_from_token),
-):
-
-    """Vytvori nove pojisteni TODOn admin rights only"""
-
-    if current_user.is_superuser:
-
-        pojisteni = zaloz_nove_pojisteni_admin(
-            pojisteni=pojisteni,
-            db=db,
-        )
-        return {"msg": "Pojisteni uspesne vytvoreno."}
-
-    if not current_user.is_superuser:
-
-        payload = {k: v for k, v in pojisteni.__dict__.items() if v is not None}
-        pojisteni = VytvorPojisteni(**payload)
-
-        pojisteni = zaloz_nove_pojisteni_uzivatel(
-            pojisteni=pojisteni,
-            db=db,
-            owner_id=current_user.id,
-        )
-
-        return {"msg": "Pojisteni uspesne vytvoreno."}
-
-    raise HTTPException(status_code=403, detail="Unauthorized - Nepovoleno")
-
-
-@pojisteni_router.put("/pojisteni/uprava/{id}")
+@router.patch("/pojisteni/uprava/{pojisteni_id}")
 def uprav_pojisteni(
-    id: int,
+    pojisteni_id: int,
     pojisteni: UpravPojisteni,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
     """Uprava pojisteni"""
 
-    if current_user.is_superuser:
+    if current_user and current_user.is_superuser:
 
-        message = uprav_pojisteni_dle_id(
-            id=id,
-            pojisteni=pojisteni,
-            db=db,
-        )
+        message = update_pojisteni(session, pojisteni_id, pojisteni=pojisteni)
 
         if not message:
 
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Pojisteni s id {id} nenalezeno",
+                detail=f"Pojisteni s id {pojisteni_id} nenalezeno",
             )
 
         return {"msg": "Successfully updated data."}
@@ -121,10 +96,11 @@ def uprav_pojisteni(
     )
 
 
-@pojisteni_router.delete("/pojisteni/vymazat/{id}")
-def vymaz_pojisteni(
-    id: int,
-    db: Session = Depends(get_db),
+@router.delete("/pojisteni/vymazat/{pojisteni_id}")
+def delete_pojisteni_admin(
+    *,
+    pojisteni_id: int,
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
 
@@ -132,11 +108,46 @@ def vymaz_pojisteni(
 
     if current_user and current_user.is_superuser:
 
-        vymaz_pojisteni_dle_id(id=id, db=db, owner_id=current_user.id)
+        message = delete_pojisteni(session, pojisteni_id)
 
-        return {"msg": "Successfully deleted."}
+        if not message:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojisteni s id {id} nenalezeno",
+            )
+
+        msg = f"Successfully deleted data - pojisteni id: {pojisteni_id}."
+        return {"msg": msg}
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail=f"You are not permitted!!!!",
     )
+
+
+@router.get("/pojisteni/vse/", response_model=List[ZobrazPojisteni])
+def zobrazit_vsechns_pojisteni(session: Session = Depends(get_session)):
+
+    """Zobrazi vsechna pojisteni"""
+
+    pojisteni = list_pojisteni(session=session)
+
+    if not pojisteni:
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Zadna pojisteni nenalezena",
+        )
+
+    return pojisteni
+
+
+# @pojisteni_router.get("/pojisteni/pojistenec/vse/", response_model=List[ZobrazPojisteni])
+# def zobraz_pojisteni_pojistence(pojistenec_id:int, db: Session = Depends(get_db)):
+#
+#     """Zobrazi vsechna dostupna pojisteni pojistence"""
+#
+#     pojisteni = najdi_vse_pojisteni_pojistence(pojistenec_id, db=db)
+#
+#     return pojisteni

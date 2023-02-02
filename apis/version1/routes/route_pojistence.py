@@ -9,84 +9,75 @@ from fastapi import status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic.dataclasses import dataclass
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.version1.routes.route_login import get_current_user_from_token
 from db.models.pojistenec import Pojistenec
-from db.models.pojisteni import Pojisteni
+from db.models.pojistenec import PojistenecOut
+from db.repository.pojistenec import create_pojistenec
+from db.repository.pojistenec import delete_pojistence
+from db.repository.pojistenec import find_pojistenec
 from db.repository.pojistenec import list_pojistence
-from db.repository.pojistenec import najdi_pojistence
-from db.repository.pojistenec import uprav_pojistence_dle_id
-from db.repository.pojistenec import vymaz_pojistence_dle_id
-from db.repository.pojistenec import vytvor_noveho_pojistence
-from db.session import get_db
+from db.repository.pojistenec import update_pojistence
+from db.session import get_session
 from schemas.pojistenec import UpravPojistence
 from schemas.pojistenec import VytvorPojistence
 from schemas.pojistenec import ZobrazPojistence
 
 
-pojistenci_router = APIRouter(prefix="", tags=["pojistenci-api"])
+router = APIRouter(prefix="", tags=["pojistenci-api"])
 templates = Jinja2Templates(directory="templates")
 
 
-@pojistenci_router.get("/pojistenci/{id}", response_model=ZobrazPojistence)
-def nacti_pojistence(id: int, db: Session = Depends(get_db)):
+@router.post("/pojistenec/vytvorit/", response_model=PojistenecOut)
+async def vytvorit_pojistence(
+    *,
+    pojistenec: VytvorPojistence,
+    session: Session = Depends(get_session),
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
+    """Vytvori pojistence"""
 
-    """Nacte detail jednotliveho pojisteni"""
+    if current_user and current_user.is_superuser:
 
-    pojistenec = najdi_pojistence(id=id, db=db)
+        pojistenec = create_pojistenec(session, pojistenec)
+
+        return pojistenec
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
+
+
+@router.get("/pojistenec/{pojistenec_id}", response_model=ZobrazPojistence)
+def get_pojistence(*, session: Session = Depends(get_session), pojistenec_id: int):
+    """Nacte pojistence"""
+
+    pojistenec = find_pojistenec(session, pojistenec_id)
 
     if not pojistenec:
 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id {id} neexistuje",
+            detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
         )
 
     return pojistenec
 
 
-@pojistenci_router.get("/pojistenci/vse/", response_model=List[ZobrazPojistence])
-def zobrazit_pojistence(db: Session = Depends(get_db)):
-
-    """Zobrazi vsechna dostupna pojisteni"""
-
-    pojistenci = list_pojistence(db=db)
-
-    return pojistenci
-
-
-@pojistenci_router.post("/pojistenci/vytvorit/", response_model=ZobrazPojistence)
-async def vytvorit_pojistence(
-    pojistenec: VytvorPojistence,
-    db: Session = Depends(get_db),
-    current_user: Pojistenec = Depends(get_current_user_from_token),
-):
-
-    """Vytvori noveho pojistence"""
-
-    pojistenec = vytvor_noveho_pojistence(pojistenec=pojistenec, db=db)
-
-    return pojistenec
-
-
-@pojistenci_router.put("/pojistenci/uprava/{id}")
+@router.patch("/pojistenci/uprava/{pojistenec_id}", response_model=ZobrazPojistence)
 async def upravit_pojistence(
-    id: int,
+    pojistenec_id: int,
     pojistenec: UpravPojistence,
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """Uprava pojistence"""
 
-    if current_user.is_superuser:
+    if current_user and current_user.is_superuser:
 
-        message = uprav_pojistence_dle_id(
-            id=id,
-            pojistenec=pojistenec,
-            db=db,
-        )
+        message = update_pojistence(session, pojistenec_id, pojistenec)
 
         if not message:
 
@@ -103,30 +94,41 @@ async def upravit_pojistence(
     )
 
 
-@pojistenci_router.delete("/pojistenci/vymazat/{id}")
+@router.delete("/pojistenci/vymazat/{pojistenec_id}")
 async def vymazat_pojistence(
-    id: int,
-    db: Session = Depends(get_db),
+    *,
+    pojistenec_id: int,
+    session: Session = Depends(get_session),
     current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
-
     """Vymaze pojistence dle id"""
 
-    message = vymaz_pojistence_dle_id(id=id, db=db)
+    if current_user and current_user.is_superuser:
 
-    if not message:
-        raise HTTPException(
+        message = delete_pojistence(session, pojistenec_id)
+
+        response = HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s id {id} nenalezen",
+            detail=f"Pojistenec s id {pojistenec_id} nenalezen",
         )
 
-    #    if current_user.is_superuser:
-    if current_user.id:
+        if not message:
+            return response
 
-        vymaz_pojistence_dle_id(id=id, db=db)
-
-        return {"msg": "Successfully deleted."}
+        msg = f"Successfully deleted pojistenec : {pojistenec_id}."
+        return {"msg": msg}
 
     raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail=f"You are not permitted!!!!"
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"Nepovoleno - You are not permitted!!!",
     )
+
+
+@router.get("/pojistenci/vse/", response_model=List[ZobrazPojistence])
+def zobrazi_vsechny_pojistence(session: Session = Depends(get_session)):
+
+    """Zobrazi vsechna pojisteni"""
+
+    pojistenci = list_pojistence(session)
+
+    return pojistenci

@@ -14,14 +14,14 @@ from fastapi.templating import Jinja2Templates
 from jose import ExpiredSignatureError
 from jose import jwt
 from jose import JWTError
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from apis.utils import OAuth2PasswordBearerWithCookie
 from core.config import settings
 from core.hashing import Hasher
 from core.security import create_access_token
 from db.repository.login import najdi_pojistence_dle_emailu
-from db.session import get_db
+from db.session import get_session
 from schemas.tokens import Token
 
 
@@ -29,11 +29,11 @@ login_router = APIRouter(prefix="", tags=["login-api"])
 templates = Jinja2Templates(directory="templates")
 
 
-def authenticate_user(email: str, password: str, db: Session):
+def authenticate_user(email: str, password: str, session: Session):
 
     """Overime zda uzivatel exisuje"""
 
-    user = najdi_pojistence_dle_emailu(email=email, db=db)
+    user = najdi_pojistence_dle_emailu(email, session)
 
     if not user:
         return False
@@ -48,10 +48,10 @@ def authenticate_user(email: str, password: str, db: Session):
 def login_for_access_token(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_session),
 ):
 
-    user = authenticate_user(form_data.username, form_data.password, db)
+    user = authenticate_user(form_data.username, form_data.password, session)
 
     if not user:
 
@@ -78,7 +78,7 @@ oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login/token")
 
 
 def get_current_user_from_token(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)
 ):
 
     """Najdi uzivatele podle tokenu"""
@@ -108,7 +108,7 @@ def get_current_user_from_token(
         print(f"JWTError \n {e}")
         raise credentials_exception
 
-    user = najdi_pojistence_dle_emailu(email=username, db=db)
+    user = najdi_pojistence_dle_emailu(email=username, session=session)
 
     if user is None:
         raise credentials_exception
