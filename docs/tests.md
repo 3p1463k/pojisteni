@@ -1,10 +1,42 @@
 # Testing
+Pro dokumentaci visit [docs.pytest.org](https://docs.pytest.org/en/7.2.x/)
 
+## Testing s Pytest
+![Login token](img/pytest1.png){ loading=lazy }
 
-## Testing configuration
+Aplikace testuje zakladni operace.
 
+Vytvori si vlastni databazi pro testovani.
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+Vyuziva in-memory db pro lepsi performance.
+## Druh pojisteni
+
+    Vytvoreni druhu pojisteni
+    Uprava druhu pojisteni
+    Zobrazeni druhu pojisteni
+    Uprava druhu pojisteni
+    Vymazani druhu pojisteni
+
+## Pojisteni
+
+    Vytvoreni pojisteni
+    Uprava pojisteni
+    Zobrazeni pojisteni
+    Uprava pojisteni
+    Vymazani pojisteni
+
+## Pojistenec
+
+    Vytvoreni pojistence
+    Uprava pojistence
+    Zobrazeni pojistence
+    Uprava pojistence
+    Vymazani pojistence
+
+## Udalosti
+
+    Vytvoreni udalosi
+    Uprava udalosi
+    Zobrazeni udalosi
+    Uprava udalosi
+    Vymazani udalosi

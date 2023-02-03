@@ -1,10 +1,15 @@
 # Templates
 
+## Jinja2
+![Login token](img/jinja1.webp){ loading=lazy }
 
-## Templates
+Plnohodnotny template engine pro Python.
 
+Pro dokumentaci visit [palletsprojects.com](https://palletsprojects.com/p/jinja/)
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## W3CSS
+![Login token](img/w31.png){ loading=lazy }
+
+A Quality Alternative to Bootstrap
+
+Pro dokumentaci visit [w3schools.com/w3css/](https://www.w3schools.com/w3css/default.asp)

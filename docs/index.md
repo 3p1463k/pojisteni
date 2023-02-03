@@ -1,6 +1,6 @@
 # Pojisteni Intro
 
-#### Aplikce Pojisteni highlight's
+Aplikace vyuziva tyto nastroje:
 
 ## Python
 
@@ -9,7 +9,8 @@
 
 ## API
     FastAPI
-    Swagger UI
+    Swagger UI (OpenApi)
+    JSON Schema
     SQLModel
     Pydantic
 
@@ -34,4 +35,4 @@
     Pre-commit
 
 ## Docs
-    Material for MK-Docs
+    Material for MKDocs

@@ -1,10 +1,9 @@
 # Project layout
+Vice info na  [github.com/3p1463k/pojisteni](https://github.com/3p1463k/pojisteni)
+
+## Root folder files
+![Login token](img/layout2.png){ loading=lazy }
 
 
-## Layout
-
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Foldres
+![Login token](img/layout1.png){ loading=lazy }

@@ -1,13 +1,16 @@
-# Schemas
+# Models
 
 
-## SQLModel Schemas
+## SQLModel database models
 
 ### Pojistenec
-```py
-class VytvorPojistence(SQLModel):
 
-    """Atributy k validaci vytvoreni  pojistence"""
+PojistenecBase
+```py
+
+class PojistenecBase(SQLModel):
+
+    """Base model"""
 
     jmeno: Optional[str] = Field(index=True)
     prijmeni: Optional[str] = Field(default=None)
@@ -16,8 +19,30 @@ class VytvorPojistence(SQLModel):
     psc: Optional[int] = Field(default=None)
     telefon: Optional[int] = Field(default=None)
     email: Optional[EmailStr] = Field(default=None)
-    password: Optional[str] = Field(default=None)
+    hashed_password: Optional[str] = Field(default=None)
+
+    is_active: Optional[bool] = Field(default=True)
+    is_superuser: Optional[bool] = Field(default=False)
+
 ```
+Pojistenec table=True
+
+```py
+class Pojistenec(PojistenecBase, table=True):
+
+    """Model a relationship pro vytvoreni databaze"""
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    pojisteni: List["Pojisteni"] = Relationship(
+        back_populates="pojistenec", sa_relationship_kwargs={"cascade": "delete"}
+    )
+
+    udalost: List["Udalost"] = Relationship(
+        back_populates="pojistenec", sa_relationship_kwargs={"cascade": "delete"}
+    )
+```
+
 ### Pojisteni
 ```py
 class VytvorPojisteni(PojisteniBase):
@@ -26,15 +51,14 @@ class VytvorPojisteni(PojisteniBase):
 
     pass
 
-```
-```py
+
 class ZobrazPojisteni(Pojisteni):
 
     """Zobrazeni pojisteni bez duvernych udaju"""
 
     pass
-```
-```py
+
+
 class UpravPojisteni(SQLModel):
 
     """Schema pro upravu pojisteni"""
@@ -51,15 +75,15 @@ class VytvorUdalost(UdalostBase):
     """Atributy k validaci  pojisteni"""
 
     pass
-```
-```py
+
+
 class ZobrazUdalost(Udalost):
 
     """Zobrazeni pojisteni bez duvernych udaju"""
 
     pass
-```
-```py
+
+
 class UpravUdalost(SQLModel):
 
     """Schema pro upravu pojisteni"""
@@ -67,13 +91,4 @@ class UpravUdalost(SQLModel):
     nazev: Optional[str] = Field(default=None)
     popis: Optional[str] = Field(default=None)
     cena: Optional[int] = Field(default=None)
-```
-### Token
-```py
-class Token(SQLModel):
-
-    """Token base model"""
-
-    access_token: str
-    token_type: str
 ```
