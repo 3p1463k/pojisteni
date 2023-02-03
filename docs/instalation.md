@@ -23,6 +23,12 @@ git clone https://github.com/3p1463k/pojisteni.git
 ```
 cd pojisteni
 ```
+
+### Aktivace virtualniho prostredi
+```
+conda activate pojisteni
+```
+
 ### Install dependencies
 
 ```

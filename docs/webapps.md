@@ -1,10 +1,29 @@
 # Webb Apps
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Webapps
 
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+### Home page
+![Hasher](img/web1.png){  width="600" loading=lazy }
+
+### O nas
+![Hasher](img/about1.png){  width="600" loading=lazy }
+
+### Kontakt
+![Hasher](img/kon1.png){  width="600" loading=lazy }
+
+### Registrace
+![Hasher](img/reg1.png){  width="600" loading=lazy }
+
+### Login
+![Hasher](img/log1.png){  width="600" loading=lazy }
+
+### Logout
+
+## Ucet uzivatele
+
+### Moje pojisteni
+
+### Zalozit pojisteni
+
+### Moje udalosti
+
+### Zalozit udalost

@@ -1,14 +1,13 @@
 # Testing
 Pro dokumentaci visit [docs.pytest.org](https://docs.pytest.org/en/7.2.x/)
 
-## Testing s Pytest
+## Pytest
 ![Login token](img/pytest1.png){ loading=lazy }
 
 Aplikace testuje zakladni operace.
 
-Vytvori si vlastni databazi pro testovani.
-
 Vyuziva in-memory db pro lepsi performance.
+
 ## Druh pojisteni
 
     Vytvoreni druhu pojisteni
