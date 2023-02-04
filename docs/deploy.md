@@ -5,11 +5,11 @@
 
 ![Linode](img/lin1.png){ loading=lazy }
 
-### Vyplnime root password a ssh key
+### Zadani root password a public ssh key
 ![Linode](img/lin2.png){ loading=lazy }
 
 
-### SSH do serveru s linode ip
+### SSH do serveru s pridelenou linode ip
 ```
 ssh root@123.456.789
 ```
@@ -52,7 +52,7 @@ server{
 ```
 Vytvorime symbolickou linku
 ```
-(venv) $ sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
+(venv) $ sudo ln -s /etc/nginx/sites-available/pojisteni /etc/nginx/sites-enabled/
 ```
 
 ### Gunicorn test
@@ -85,9 +85,9 @@ ExecStart=/var/www/pojisteni/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWo
 [Install]
 WantedBy=multi-user.target
 ```
-Spustime nas service , ktery bude bezet v pozadi
+Spustime service , ktery bude bezet v pozadi
 ```
-$ sudo systemctl start myapp.service
+$ sudo systemctl start pojisteni.service
 ```
 
 ## KaBOOM
