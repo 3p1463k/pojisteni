@@ -45,4 +45,4 @@ uvicorn main:app
 
 Na adrese [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-![Start App](img/web1.png){ loading=lazy }
+![Start App](img/web1.png){  width="400" loading=lazy }

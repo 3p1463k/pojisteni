@@ -2,19 +2,19 @@
 
 
 ### Home page
-![Hasher](img/web1.png){  width="600" loading=lazy }
+![Hasher](img/web1.png){  width="400" loading=lazy }
 
 ### O nas
-![Hasher](img/about1.png){  width="600" loading=lazy }
+![Hasher](img/about1.png){  width="400" loading=lazy }
 
 ### Kontakt
-![Hasher](img/kon1.png){  width="600" loading=lazy }
+![Hasher](img/kon1.png){  width="400" loading=lazy }
 
 ### Registrace
-![Hasher](img/reg1.png){  width="600" loading=lazy }
+![Hasher](img/reg1.png){  width="400" loading=lazy }
 
 ### Login
-![Hasher](img/log1.png){  width="600" loading=lazy }
+![Hasher](img/log1.png){  width="400" loading=lazy }
 
 ### Logout
 

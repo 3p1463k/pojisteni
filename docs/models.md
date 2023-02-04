@@ -3,9 +3,9 @@
 
 ## SQLModel database models
 
-### Pojistenec
+## Pojistenec
 
-PojistenecBase
+### PojistenecBase
 ```py
 
 class PojistenecBase(SQLModel):
@@ -25,7 +25,7 @@ class PojistenecBase(SQLModel):
     is_superuser: Optional[bool] = Field(default=False)
 
 ```
-Pojistenec table=True
+### Pojistenec (table=True)
 
 ```py
 class Pojistenec(PojistenecBase, table=True):
@@ -35,60 +35,60 @@ class Pojistenec(PojistenecBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     pojisteni: List["Pojisteni"] = Relationship(
-        back_populates="pojistenec", sa_relationship_kwargs={"cascade": "delete"}
+
+        back_populates="pojistenec",
+        sa_relationship_kwargs={"cascade": "delete"}
     )
 
     udalost: List["Udalost"] = Relationship(
-        back_populates="pojistenec", sa_relationship_kwargs={"cascade": "delete"}
+
+        back_populates="pojistenec",
+        sa_relationship_kwargs={"cascade": "delete"}
     )
 ```
+## Pojisteni
 
-### Pojisteni
+### PojisteniBase
 ```py
-class VytvorPojisteni(PojisteniBase):
+class PojisteniBase(SQLModel):
 
-    """Atributy k validaci  pojisteni"""
-
-    pass
-
-
-class ZobrazPojisteni(Pojisteni):
-
-    """Zobrazeni pojisteni bez duvernych udaju"""
-
-    pass
-
-
-class UpravPojisteni(SQLModel):
-
-    """Schema pro upravu pojisteni"""
+    """Spolecne atributy"""
 
     nazev: Optional[str] = Field(default=None)
     popis: Optional[str] = Field(default=None)
     cena: Optional[int] = Field(default=None)
+    datum_zalozeni: Optional[date] = datetime.now().date()
+
+    pojistenec_id: Optional[int] = Field(default=None, foreign_key="pojistenec.id")
 ```
-### Udalosti
+### Pojisteni (table=True)
+```py
+class Pojisteni(PojisteniBase, table=True):
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    pojistenec: Optional["Pojistenec"] = Relationship(back_populates="pojisteni")
+```
+## Udalosti
+
+### UdalostBase
 ```py
 
-class VytvorUdalost(UdalostBase):
+class UdalostBase(SQLModel):
 
-    """Atributy k validaci  pojisteni"""
-
-    pass
-
-
-class ZobrazUdalost(Udalost):
-
-    """Zobrazeni pojisteni bez duvernych udaju"""
-
-    pass
-
-
-class UpravUdalost(SQLModel):
-
-    """Schema pro upravu pojisteni"""
+    """Spolecne atributy"""
 
     nazev: Optional[str] = Field(default=None)
     popis: Optional[str] = Field(default=None)
-    cena: Optional[int] = Field(default=None)
+    skoda: Optional[int] = Field(default=None)
+    datum_zalozeni: Optional[date] = datetime.now().date()
+
+    pojistenec_id: Optional[int] = Field(default=None, foreign_key="pojistenec.id")
+
+```
+### Udalost (table=True )
+```py
+class Udalost(UdalostBase, table=True):
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    pojistenec: "Pojistenec" = Relationship(back_populates="udalost")
 ```

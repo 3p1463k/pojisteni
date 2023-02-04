@@ -1,9 +1,8 @@
 # Schemas
 
+## Pojistenec
 
-## SQLModel Schemas
-
-### Pojistenec
+### VytvorPojistenec
 ```py
 class VytvorPojistence(SQLModel):
 
@@ -18,7 +17,38 @@ class VytvorPojistence(SQLModel):
     email: Optional[EmailStr] = Field(default=None)
     password: Optional[str] = Field(default=None)
 ```
-### Pojisteni
+### ZobrazPojistence
+```py
+class ZobrazPojistence(SQLModel):
+
+    """Zobrazeni pojistence bez hesla"""
+
+    jmeno: str
+    prijmeni: str
+    ulice: str
+    mesto: str
+    psc: int
+    telefon: int
+    email: str
+    id: int
+```
+### UpravPojistence
+```py
+class UpravPojistence(SQLModel):
+
+    """Schema pro upravu pojistence"""
+
+    jmeno: Optional[str] = Field(index=True)
+    prijmeni: Optional[str] = Field(default=None)
+    ulice: Optional[str] = Field(default=None)
+    mesto: Optional[str] = Field(default=None)
+    psc: Optional[int] = Field(default=None)
+    telefon: Optional[int] = Field(default=None)
+    email: Optional[str] = Field(default=None)
+```
+## Pojisteni
+
+### VytvorPojisteni
 ```py
 class VytvorPojisteni(PojisteniBase):
 
@@ -27,6 +57,7 @@ class VytvorPojisteni(PojisteniBase):
     pass
 
 ```
+### ZobrazPojisteni
 ```py
 class ZobrazPojisteni(Pojisteni):
 
@@ -34,6 +65,7 @@ class ZobrazPojisteni(Pojisteni):
 
     pass
 ```
+### UpravPojisteni
 ```py
 class UpravPojisteni(SQLModel):
 
@@ -43,7 +75,9 @@ class UpravPojisteni(SQLModel):
     popis: Optional[str] = Field(default=None)
     cena: Optional[int] = Field(default=None)
 ```
-### Udalosti
+## Udalosti
+
+### VytvorUdalost
 ```py
 
 class VytvorUdalost(UdalostBase):
@@ -52,6 +86,7 @@ class VytvorUdalost(UdalostBase):
 
     pass
 ```
+## ZobrazUdalost
 ```py
 class ZobrazUdalost(Udalost):
 
@@ -59,6 +94,7 @@ class ZobrazUdalost(Udalost):
 
     pass
 ```
+## UpravUdalost
 ```py
 class UpravUdalost(SQLModel):
 
@@ -68,11 +104,12 @@ class UpravUdalost(SQLModel):
     popis: Optional[str] = Field(default=None)
     cena: Optional[int] = Field(default=None)
 ```
-### Token
+## Token
+### Token schema
 ```py
 class Token(SQLModel):
 
-    """Token base model"""
+    """Token schema"""
 
     access_token: str
     token_type: str
