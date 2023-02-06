@@ -3,7 +3,7 @@
 
 ## SQLite
 
-Pro dokumentaci visit [sqlite.org](https://sqlite.org/index.html)
+Vice na [sqlite.org](https://sqlite.org/index.html)
 
 
 ![Login token](img/db1.png){ loading=lazy }
@@ -12,12 +12,11 @@ Pro dokumentaci visit [sqlite.org](https://sqlite.org/index.html)
 
 SQLModel je knihovna pro komunikaci s SQl databazemi v Python.
 
-SQLModel designed for simplicity, compatibility, and robustness.
-
-Pro dokumentaci visit [sqlmodel.tiangolo.com](https://sqlmodel.tiangolo.com/)
-
-![Login token](img/sqlm1.png){ loading=lazy }
 
 Vyvojar SQLModel je take vyvojarem FastAPI.
 
-Vyuziva Pydantic pro validaci dat.
+Vice na [sqlmodel.tiangolo.com](https://sqlmodel.tiangolo.com/)
+
+![SQLModel](img/sqlm1.png){ loading=lazy }
+
+SQLModel designed for simplicity, compatibility, and robustness.

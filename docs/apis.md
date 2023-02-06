@@ -1,9 +1,19 @@
 # APIs
-FastAPI ma built-in SwaggerUi, pro dokumentaci visit [swagger.io](https://swagger.io/tools/swagger-ui)
+FastAPI ma built-in SwaggerUi [swagger.io](https://swagger.io/tools/swagger-ui)
 
-### APIs muzeme otestovat v prohllizeci
+Zde muzeme APIs vyzkouset
 
-Na adrese [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+## APIs test
+
+### Vlastni install
+V pripade vlastni instalace na adrese :
+
+[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+### Zive demo
+Nebo na zivem demu na adrese
+
+[http://143.42.18.67/docs](http://143.42.18.67/docs)
 
 
 ![APIs](img/apis1.png){ loading=lazy }

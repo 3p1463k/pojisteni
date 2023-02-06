@@ -5,7 +5,7 @@
 
 Plnohodnotny template engine pro Python.
 
-Pro dokumentaci visit [palletsprojects.com](https://palletsprojects.com/p/jinja/)
+Vice na [palletsprojects.com](https://palletsprojects.com/p/jinja/)
 
 ## W3CSS
 ![Login token](img/w31.png){ loading=lazy }
