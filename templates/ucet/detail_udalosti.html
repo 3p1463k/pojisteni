@@ -1,0 +1,24 @@
+{% extends "shared/base_ucet.html" %}
+{% block title %}
+  <title>Detail</title>
+{% endblock %}
+
+
+{% block content %}
+<!-- Start Content -->
+
+
+<div class="w3-container w3-padding-32">
+
+
+      {% with obj=udalosti %}
+
+          {% include "components/detail_udalosti_card.html" %}
+
+       {% endwith %}
+
+
+
+</div>
+<!-- End Content -->
+{% endblock %}

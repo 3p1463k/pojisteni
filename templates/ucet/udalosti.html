@@ -9,7 +9,11 @@
       <h2>Moje udalosti</h2>
 
       {% for x in moje_udalosti%}
-      <h5 class="w3-text-red"><b>{{x.nazev}}</b></h5><h6>{{x.popis}} {{x.skoda}}</h6>
+      <div class="w3-card-4 w3-round-large">
+        <h5 class="w3-padding"><a href="/uzivatel/udalosti/{{x.id}}"class="nounderline">
+        <b>{{x.nazev}}</b> cena: {{x.cena}} zalozeno: {{x.datum_zalozeni}}</h5>
+      </div>
+
       {% endfor %}
   </div>
 
