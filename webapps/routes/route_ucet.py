@@ -18,9 +18,11 @@ from db.models.udalost import Udalost
 from db.repository.pojistenec import find_pojistenec
 from db.repository.pojisteni import find_pojisteni
 from db.repository.pojisteni import list_pojisteni
+from db.repository.udalost import find_udalost
 from db.session import get_session
 from schemas.pojistenec import ZobrazPojistence
 from schemas.pojisteni import ZobrazPojisteni
+from schemas.udalost import ZobrazUdalost
 
 
 templates = Jinja2Templates(directory="templates")
@@ -127,5 +129,35 @@ def nacti_detail_pojisteni(
 
     return templates.TemplateResponse(
         "ucet/detail_pojisteni.html",
+        context,
+    )
+
+
+@router.get("/uzivatel/udalosti/{udalost_id}", response_model=ZobrazUdalost)
+def nacti_detail_pojisteni(
+    request: Request,
+    udalost_id: int,
+    session: Session = Depends(get_session),
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
+    """Nacte detail jednotliveho pojisteni"""
+
+    udalosti = find_udalost(session, udalost_id)
+
+    context = {
+        "request": request,
+        "udalosti": udalosti,
+        "current_user": current_user,
+    }
+
+    if not udalosti:
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Udalost s  id {udalost_id} neexistuje",
+        )
+
+    return templates.TemplateResponse(
+        "ucet/detail_udalosti.html",
         context,
     )
