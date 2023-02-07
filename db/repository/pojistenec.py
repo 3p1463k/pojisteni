@@ -68,7 +68,7 @@ def delete_pojistence(session: Session, pojistenec_id: int):
 
     session.delete(pojistenec)
     session.commit()
-    return {"ok": True}
+    return 1
 
 
 def list_pojistence(session):
