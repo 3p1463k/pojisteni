@@ -1,0 +1,87 @@
+{% extends "shared/base_admin.html" %}
+{% block title %}
+  <title>Detail</title>
+{% endblock %}
+
+
+{% block content %}
+<!-- Start Content -->
+
+<div class="w3-container w3-center">
+<h1><a href="/administrator/ucet"class="nounderline">ADMIN BOARD</a></h1>
+</div>
+
+<div class="w3-container w3-padding-32">
+  <div class="w3-container w3-center">
+    <h2>POJISTENEC DETAIL</h2>
+  </div>
+
+
+      {% with obj=pojistenec %}
+      <div class="w3-container">
+
+
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+      	    id: <b>{{pojistenec.id}}</b></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+            jmeno: <b>{{pojistenec.jmeno}}</b>  <a href="#" class="w3-right w3-btn w3-medium">Upravit</a></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+            prijmeni: <b>{{pojistenec.prijmeni}}</b>  <a href="#" class="w3-right w3-btn w3-medium">Upravit</a></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              ulice: <b>{{pojistenec.ulice}}</b> <a href="#" class="w3-right w3-btn w3-medium">Upravit</a> </h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              mesto: <b>{{pojistenec.mesto}}</b><a href="#" class="w3-right w3-btn w3-medium">Upravit</a></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              psc: <b>{{pojistenec.psc}}</b> <a href="#" class="w3-right w3-btn w3-medium">Upravit</a></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              telefon: <b>{{pojistenec.telefon}}</b> <a href="#" class="w3-right w3-btn w3-medium">Upravit</a></h2>
+          </div>
+
+
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              email: <b>{{pojistenec.email}}</b> <a href="#" class="w3-right w3-btn w3-medium">Upravit</a></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              is_active: <b>{{pojistenec.is_active}}</b></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              pojisteni: <b>{{pojistenec.pojisteni}}</b></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+              udalosti: <b>{{pojistenec.udalost}}</b></h2>
+          </div>
+          {% endwith %}
+
+
+        </div>
+
+
+                  <div class="w3-container w3-center">
+
+                  <div  class="w3-panel" style="width:100%"> <a href="/administrator/pojistenec/upravit/{{pojistenec.id}}" class="nounderline"><button class="w3-btn w3-block w3-orange w3-round">UPRAVIT POJISTENCE</button></a></div>
+
+                  <div class="w3-panel" style="width:100%"> <a href="/administrator/pojistenec/vymazat/{{pojistenec.id}}" class="nounderline"><button class="w3-btn w3-block w3-red w3-round">VYMAZAT POJISTENCE</button></a></div>
+                </div>
+
+
+
+</div>
+<!-- End Content -->
+{% endblock %}

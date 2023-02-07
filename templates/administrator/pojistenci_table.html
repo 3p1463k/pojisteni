@@ -1,0 +1,32 @@
+
+  <div class="w3-panel">
+
+
+<script>
+$(document).ready(function(){
+  $(".dataframe.sortable").tablesorter();
+});
+</script>
+<style>table.center {margin-left: auto; margin-right: auto;}</style>
+
+<!-- Table -->
+<table border="1" class="dataframe sortable center">
+  <thead>
+      <tr style="text-align: right;">
+   {% for key in pojistenci2[0]%}
+   <th> {{ key }} </th>
+   {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+  <!-- table rows -->
+  {% for dictionary in pojistenci2%}
+  <tr>
+   {% for value in dictionary.values() %}
+   <td> {{ value }} </td>
+   {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+  </div>

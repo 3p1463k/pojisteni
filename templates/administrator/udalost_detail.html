@@ -1,0 +1,54 @@
+{% extends "shared/base_admin.html" %}
+{% block title %}
+  <title>Detail</title>
+{% endblock %}
+
+
+{% block content %}
+<!-- Start Content -->
+<div class="w3-container w3-center">
+<h1><a href="/administrator/ucet"class="nounderline">ADMIN BOARD</a></h1>
+</div>
+
+<div class="w3-container w3-center">
+  <h2>UDALOST DETAIL</h2>
+</div>
+<div class="w3-container w3-padding-32">
+
+
+      {% with obj=udalost %}
+      <div class="w3-container">
+
+
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+      	    id: <b>{{udalost.id}}</b></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+              <h2 class="w3-left-align w3-margin-left">
+            nazev: <b>{{udalost.nazev}}</b></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+            popis: <b>{{udalost.popis}}</b></h2>
+          </div>
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left">
+            skoda: <b>{{udalost.skoda}}</b></h2>
+          </div>
+
+          <div class="w3-card-4 w3-round">
+            <h2 class="w3-left-align w3-margin-left"><a href="/administrator/pojistenec/{{udalost.pojistenec_id}}"class="nounderline">
+            pojistenec_id: <b>{{udalost.pojistenec_id}}</b></a></h2>
+          </div>
+
+          {% endwith %}
+
+        </div>
+
+
+
+
+</div>
+<!-- End Content -->
+{% endblock %}

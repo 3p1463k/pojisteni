@@ -1,0 +1,74 @@
+{% extends "shared/base_admin.html" %}
+{% block title %}
+  <title>MOJE POJISTENI</title>
+{% endblock %}
+
+{% block content %}
+<!-- Start Content -->
+<div class="w3-container w3-center">
+<h1><a href="/administrator/ucet"class="nounderline">ADMIN BOARD</a></h1>
+</div>
+<div class="w3-container w3-center">
+
+  <div class="w3-container w3-center">
+    <div class="w3-container w3-center">
+    <h2><a href="/administrator/ucet"class="nounderline">POJISTENI (CLICKABLE)</a></h2>
+  </div>
+
+<!--
+<audio autoplay>
+  <source src="static/sound/output.mp3" type="audio/mpeg">
+</audio>
+-->
+<div class="w3-container">
+
+    {% for x in pojisteni%}
+    <div class="w3-card-4 w3-round">
+      <h5 class="w3-left-align w3-margin-left"><a href="/administrator/pojisteni/{{x.id}}"class="nounderline">
+      id:{{x.id}} nazev : <b>{{x.nazev}}</b> | pojistenec_id : {{x.pojistenec_id}} </h5>
+    </div>
+    {% endfor %}
+
+</div>
+
+<div class="w3-container w3-center w3-padding-16">
+  <div class="w3-container w3-center w3-padding">
+  <h2><a href="/"class="nounderline">POJISTENI TABLE (SORTABLE)</a></h2>
+</div>
+
+<script>
+$(document).ready(function(){
+$(".dataframe.sortable").tablesorter();
+});
+</script>
+<style>table.center {margin-left: auto; margin-right: auto;}</style>
+
+<!-- Table -->
+<div class="w3-panel">
+
+<table border="1" class="dataframe sortable center">
+<thead>
+    <tr style="text-align: right;">
+ {% for key in pojisteni2[0]%}
+ <th> {{ key }} </th>
+ {% endfor %}
+  </tr>
+</thead>
+<tbody>
+<!-- table rows -->
+{% for dictionary in pojisteni2%}
+<tr>
+ {% for value in dictionary.values() %}
+ <td> {{ value }} </td>
+ {% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+
+<!-- End Content -->
+{% endblock %}
