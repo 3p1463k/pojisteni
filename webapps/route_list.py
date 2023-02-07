@@ -1,3 +1,4 @@
+from webapps.auth import route_administrator
 from webapps.auth import route_login
 from webapps.auth import route_logout
 from webapps.routes import route_about
@@ -12,6 +13,7 @@ from webapps.routes import route_zalozit_udalost
 routes_list = [
     route_login.router,
     route_logout.router,
+    route_administrator.router,
     route_home.router,
     route_kontakt.router,
     route_about.router,
