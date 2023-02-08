@@ -12,9 +12,17 @@ V pripade vlastni instalace na adrese :
 
 ### Zive demo
 Nebo na zivem demu na adrese
-
 [http://143.42.18.67/docs](http://143.42.18.67/docs)
 
+Pro vytvareni polozek v databazi se musite autorizovat v pravo nahore emailem z obrazku
+![AUT](img/aut2.png){ loading=lazy }
+Je trebe zadat admin email
+![AUT](img/aut1.png){ loading=lazy }
+
+
+Heslo je adminheslo
+
+## APIs
 
 ![APIs](img/apis1.png){ loading=lazy }
 

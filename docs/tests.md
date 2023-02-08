@@ -4,9 +4,19 @@ Pro dokumentaci visit [docs.pytest.org](https://docs.pytest.org/en/7.2.x/)
 ## Pytest
 ![Login token](img/pytest1.png){ loading=lazy }
 
-Aplikace testuje zakladni operace.
+Thanks to Starlette's TestClient, testing FastAPI applications is easy and enjoyable.
+
+```py
+from fastapi.testclient import TestClient
+```
+
 
 Vyuziva in-memory db pro lepsi performance.
+
+![Testing](img/test1.png){ loading=lazy }
+
+
+Aplikace testuje zakladni operace.
 
 ## Druh pojisteni
 

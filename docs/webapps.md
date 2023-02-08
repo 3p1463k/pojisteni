@@ -1,7 +1,7 @@
 # Webb Apps
 
 
-### Home page
+## Home page
 ![Hasher](img/web1.png){  width="400" loading=lazy }
 
 ### O nas
@@ -16,14 +16,21 @@
 ### Login
 ![Hasher](img/log1.png){  width="400" loading=lazy }
 
-### Logout
 
 ## Ucet uzivatele
 
+![Hasher](img/user1.png){  width="400" loading=lazy }
+
 ### Moje pojisteni
+![Hasher](img/user2.png){  width="400" loading=lazy }
 
 ### Zalozit pojisteni
+![Hasher](img/user3.png){  width="400" loading=lazy }
 
 ### Moje udalosti
+![Hasher](img/user4.png){  width="400" loading=lazy }
 
 ### Zalozit udalost
+![Hasher](img/user5.png){  width="400" loading=lazy }
+
+### Logout

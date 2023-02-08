@@ -2,7 +2,7 @@
 
 ## Pojistenec
 
-### VytvorPojistenec
+### VytvorPojistence
 ```py
 class VytvorPojistence(SQLModel):
 
