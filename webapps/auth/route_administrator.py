@@ -16,16 +16,19 @@ from db.models.pojistenec import Pojistenec
 from db.repository.pojistenec import delete_pojistence
 from db.repository.pojistenec import find_pojistenec
 from db.repository.pojistenec import list_pojistence
+from db.repository.pojistenec import update_pojistence
 from db.repository.pojisteni import find_pojisteni
 from db.repository.pojisteni import list_pojisteni
 from db.repository.udalost import find_udalost
 from db.repository.udalost import list_udalosti
 from db.session import get_session
+from schemas.pojistenec import UpravPojistence
 from schemas.pojistenec import VytvorPojistence
 from schemas.pojistenec import ZobrazPojistence
 from schemas.pojisteni import ZobrazPojisteni
 from schemas.udalost import ZobrazUdalost
 from webapps.auth.forms import LoginForm
+from webapps.auth.forms import RegistraceForm
 
 
 templates = Jinja2Templates(directory="templates")
@@ -77,7 +80,12 @@ async def prihlas_admina(request: Request, session: Session = Depends(get_sessio
 
                 return response
 
-            return templates.TemplateResponse("auth/admin.html", form.__dict__)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"You are not permitted!!!!",
+            )
+
+            # return templates.TemplateResponse("auth/admin.html", form.__dict__)
 
         except HTTPException:
 
@@ -91,29 +99,28 @@ async def prihlas_admina(request: Request, session: Session = Depends(get_sessio
 
 @router.get("/administrator/ucet/")
 def admin_ucet(
-    request: Request, session: Session = Depends(get_session), msg: str = None
+    request: Request,
+    session: Session = Depends(get_session),
+    msg: str = None,
+    current_user: Pojistenec = Depends(get_current_user_from_token),
 ):
 
     """TODO............"""
 
-    class CurrentUser:
-        def __init__(self):
-            """TODO............"""
-            self.errors: List = []
-            self.jmeno = "Bohousek"
-            self.prijmeni = "Admin"
+    if current_user.is_superuser:
 
-    current_user = CurrentUser()
+        context = {
+            "request": request,
+            "current_user": current_user,
+            "msg": msg,
+        }
 
-    # rint(current_user.jmeno)
+        return templates.TemplateResponse("auth/adminhome.html", context)
 
-    context = {
-        "request": request,
-        "current_user": current_user,
-        "msg": msg,
-    }
-
-    return templates.TemplateResponse("auth/adminhome.html", context)
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/pojistenci/")
@@ -125,32 +132,41 @@ def admin_get_pojistenci(
 ):
     """Nacte pojistence"""
 
-    pojistenci = list_pojistence(session)
+    if current_user.is_superuser:
 
-    pojistenci1 = [x.__dict__ for x in pojistenci]
+        pojistenci = list_pojistence(session)
 
-    def without_keys(d, keys):
-        return {k: v for k, v in d.items() if k not in keys}
+        pojistenci1 = [x.__dict__ for x in pojistenci]
 
-    keys1 = ["_sa_instance_state", "hashed_password", "is_superuser"]
+        def without_keys(d, keys):
+            return {k: v for k, v in d.items() if k not in keys}
 
-    pojistenci2 = [without_keys(x, keys1) for x in pojistenci1]
+        keys1 = ["_sa_instance_state", "hashed_password", "is_superuser"]
 
-    if not pojistenci2:
+        pojistenci2 = [without_keys(x, keys1) for x in pojistenci1]
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id neexistuje",
+        if not pojistenci2:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojistenec s  id neexistuje",
+            )
+
+        context = {
+            "pojistenci": pojistenci2,
+            "request": request,
+            "current_user": current_user,
+            "msg": msg,
+        }
+
+        return templates.TemplateResponse(
+            "administrator/admin_pojisteneci.html", context
         )
 
-    context = {
-        "pojistenci": pojistenci2,
-        "request": request,
-        "current_user": current_user,
-        "msg": msg,
-    }
-
-    return templates.TemplateResponse("administrator/admin_pojisteneci.html", context)
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/pojisteni/", response_model=ZobrazPojisteni)
@@ -162,32 +178,39 @@ def admin_get_pojisteni(
 ):
     """Nacte pojistence"""
 
-    pojisteni = list_pojisteni(session)
+    if current_user.is_superuser:
 
-    pojisteni1 = [x.__dict__ for x in pojisteni]
+        pojisteni = list_pojisteni(session)
 
-    def without_keys(d, keys):
-        return {k: v for k, v in d.items() if k not in keys}
+        pojisteni1 = [x.__dict__ for x in pojisteni]
 
-    keys1 = ["_sa_instance_state"]
+        def without_keys(d, keys):
+            return {k: v for k, v in d.items() if k not in keys}
 
-    pojisteni2 = [without_keys(x, keys1) for x in pojisteni1]
+        keys1 = ["_sa_instance_state"]
 
-    if not pojisteni:
+        pojisteni2 = [without_keys(x, keys1) for x in pojisteni1]
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id neexistuje",
-        )
+        if not pojisteni:
 
-    context = {
-        "pojisteni": pojisteni,
-        "pojisteni2": pojisteni2,
-        "request": request,
-        "current_user": current_user,
-    }
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Zadne pojisteni neexistuje",
+            )
 
-    return templates.TemplateResponse("administrator/admin_pojisteni.html", context)
+        context = {
+            "pojisteni": pojisteni,
+            "pojisteni2": pojisteni2,
+            "request": request,
+            "current_user": current_user,
+        }
+
+        return templates.TemplateResponse("administrator/admin_pojisteni.html", context)
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get(
@@ -202,22 +225,31 @@ def admin_get_pojistence(
 ):
     """Nacte pojistence"""
 
-    pojistenec = find_pojistenec(session, pojistenec_id)
+    if current_user.is_superuser:
 
-    if not pojistenec:
+        pojistenec = find_pojistenec(session, pojistenec_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+        if not pojistenec:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+            )
+
+        context = {
+            "pojistenec": pojistenec,
+            "request": request,
+            "current_user": current_user,
+        }
+
+        return templates.TemplateResponse(
+            "administrator/pojistenec_detail.html", context
         )
 
-    context = {
-        "pojistenec": pojistenec,
-        "request": request,
-        "current_user": current_user,
-    }
-
-    return templates.TemplateResponse("administrator/pojistenec_detail.html", context)
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/pojistenec/vymazat/{pojistenec_id}")
@@ -230,21 +262,28 @@ def admin_vymazat_pojistence(
 ):
     """Vymaze pojistence"""
 
-    pojistenec = delete_pojistence(session, pojistenec_id)
+    if current_user.is_superuser:
 
-    if not pojistenec:
+        pojistenec = delete_pojistence(session, pojistenec_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+        if not pojistenec:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+            )
+
+        response = RedirectResponse(
+            "/administrator/pojistenci?msg=Pojistenec-uspesne-vymazan",
+            status_code=status.HTTP_302_FOUND,
         )
 
-    response = RedirectResponse(
-        "/administrator/pojistenci?msg=Pojistenec-uspesne-vymazan",
-        status_code=status.HTTP_302_FOUND,
-    )
+        return response
 
-    return response
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/pojistenec/upravit/{pojistenec_id}")
@@ -257,22 +296,74 @@ def admin_update_pojistence(
 ):
     """Vymaze pojistence"""
 
-    pojistenec = find_pojistenec(session, pojistenec_id)
+    if current_user.is_superuser:
 
-    if not pojistenec:
+        pojistenec = find_pojistenec(session, pojistenec_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+        if not pojistenec:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+            )
+
+        context = {
+            "pojistenec": pojistenec,
+            "request": request,
+            "current_user": current_user,
+        }
+
+        return templates.TemplateResponse(
+            "administrator/pojistenec_upravit.html", context
         )
 
-    context = {
-        "pojistenec": pojistenec,
-        "request": request,
-        "current_user": current_user,
-    }
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
-    return templates.TemplateResponse("administrator/pojistenec_upravit.html", context)
+
+@router.post("/administrator/pojistenec/upravit/{pojistenec_id}")
+async def admin_uprav_pojistence(
+    pojistenec_id,
+    pojistenec: UpravPojistence,
+    request: Request,
+    session: Session = Depends(get_session),
+    msg: str = None,
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
+    """Uprava pojistence"""
+
+    # pojistenec = find_pojistenec(session, pojistenec_id)
+    if current_user.is_superuser:
+
+        form = RegistraceForm(request)
+        await form.load_data()
+
+        pojistenec1 = UpravPojistence(
+            jmeno=form.jmeno,
+            prijmeni=form.prijmeni,
+            ulice=form.ulice,
+            mesto=form.mesto,
+            psc=form.psc,
+            telefon=form.telefon,
+            email=form.email,
+            password=form.password,
+        )
+
+        pojistenec2 = update_pojistence(session, pojistenec_id, pojistenec1)
+
+        response = responses.RedirectResponse(
+            "/administrator/pojistenci?msg=Pojistenec-uspesne-Upraven",
+            status_code=status.HTTP_302_FOUND,
+        )
+
+        return response
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/pojisteni/{pojisteni_id}", response_model=ZobrazPojisteni)
@@ -285,18 +376,31 @@ def admin_get_pojisteni(
 ):
     """Nacte detail jednotliveho pojisteni"""
 
-    pojisteni = find_pojisteni(session, pojisteni_id)
+    if current_user.is_superuser:
 
-    if not pojisteni:
+        pojisteni = find_pojisteni(session, pojisteni_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojisteni s  id {pojisteni_id} neexistuje",
+        if not pojisteni:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojisteni s  id {pojisteni_id} neexistuje",
+            )
+
+        context = {
+            "pojisteni": pojisteni,
+            "request": request,
+            "current_user": current_user,
+        }
+
+        return templates.TemplateResponse(
+            "administrator/pojisteni_detail.html", context
         )
 
-    context = {"pojisteni": pojisteni, "request": request, "current_user": current_user}
-
-    return templates.TemplateResponse("administrator/pojisteni_detail.html", context)
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/udalosti/", response_model=ZobrazUdalost)
@@ -308,31 +412,38 @@ def admin_get_udalosti(
 ):
     """Nacte udalosti"""
 
-    udalosti = list_udalosti(session)
-    udalosti2 = [x.__dict__ for x in udalosti]
+    if current_user.is_superuser:
 
-    def without_keys(d, keys):
-        return {k: v for k, v in d.items() if k not in keys}
+        udalosti = list_udalosti(session)
+        udalosti2 = [x.__dict__ for x in udalosti]
 
-    keys1 = ["_sa_instance_state"]
+        def without_keys(d, keys):
+            return {k: v for k, v in d.items() if k not in keys}
 
-    udalosti2 = [without_keys(x, keys1) for x in udalosti2]
+        keys1 = ["_sa_instance_state"]
 
-    if not udalosti:
+        udalosti2 = [without_keys(x, keys1) for x in udalosti2]
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id neexistuje",
-        )
+        if not udalosti:
 
-    context = {
-        "udalosti": udalosti,
-        "udalosti2": udalosti2,
-        "request": request,
-        "current_user": current_user,
-    }
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Udalost  neexistuje",
+            )
 
-    return templates.TemplateResponse("administrator/admin_udalosti.html", context)
+        context = {
+            "udalosti": udalosti,
+            "udalosti2": udalosti2,
+            "request": request,
+            "current_user": current_user,
+        }
+
+        return templates.TemplateResponse("administrator/admin_udalosti.html", context)
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.get("/administrator/udalost/{udalost_id}", response_model=ZobrazUdalost)
@@ -345,15 +456,22 @@ def admin_get_udalost(
 ):
     """Nacte detail udalosti"""
 
-    udalost = find_udalost(session, udalost_id)
+    if current_user.is_superuser:
 
-    if not udalost:
+        udalost = find_udalost(session, udalost_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojisteni s  id {pojisteni_id} neexistuje",
-        )
+        if not udalost:
 
-    context = {"udalost": udalost, "request": request, "current_user": current_user}
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Udalost s  id {udalost_id} neexistuje",
+            )
 
-    return templates.TemplateResponse("administrator/udalost_detail.html", context)
+        context = {"udalost": udalost, "request": request, "current_user": current_user}
+
+        return templates.TemplateResponse("administrator/udalost_detail.html", context)
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
