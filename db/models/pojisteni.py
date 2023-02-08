@@ -32,22 +32,3 @@ class Pojisteni(PojisteniBase, table=True):
     def __repr__(self):
 
         return f"{self.nazev }"
-
-
-#
-#
-#
-# class ZobrazPojisteni(Pojisteni):
-#
-#     """Zobrazeni pojisteni bez duvernych udaju"""
-#
-#     nazev: Optional[str] = None
-#     popis: Optional[str] = None
-#     cena: Optional[int] = None
-#     pojistenec_id: Optional[int] = None
-#     id: int = None
-#
-#     datum_zalozeni: Optional[date]
-#
-#     class Config:
-#         orm_mode = True

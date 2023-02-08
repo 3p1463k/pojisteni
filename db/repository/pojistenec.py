@@ -48,7 +48,6 @@ def update_pojistence(
         return 0
 
     pojistenec_data = pojistenec.dict(exclude_unset=True)
-    print(pojistenec_data)
 
     for key, value in pojistenec_data.items():
         setattr(existing_pojistenec, key, value)
