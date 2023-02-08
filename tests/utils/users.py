@@ -6,7 +6,7 @@ from db.repository.pojistenec import create_pojistenec
 from schemas.pojistenec import VytvorPojistence
 
 
-def user_authentication_headers(client: TestClient, email: str, password: str):
+def user_authentication_headers(client, email: str, password: str):
 
     """TODO.............."""
 
@@ -22,30 +22,7 @@ def user_authentication_headers(client: TestClient, email: str, password: str):
     return headers
 
 
-def authentication_token_from_email(client: TestClient, email: str, session: Session):
+def authentication_token_from_email(session, client, email: str, password: str):
+    """Return a token with given email"""
 
-    """
-    Return a valid token for the user with given email.
-    If the user doesn't exist it is created first.
-    """
-
-    password = "random-passW0rd"
-    pojistenec = najdi_pojistence_dle_emailu(email, session)
-
-    if not pojistenec:
-
-        pojistenec = VytvorPojistence(
-            jmeno="Janek",
-            prijmeni="Dobrak",
-            ulice="Nejaka 55",
-            mesto="Paka",
-            psc=20315,
-            telefon=55555555,
-            email="test@example.com",
-            password="random-passW0rd",
-        )
-
-        pojistenec = create_pojistenec(session, pojistenec)
-        print(pojistenec)
-
-    return user_authentication_headers(client=client, email=email, password=password)
+    return user_authentication_headers(client, email, password)

@@ -34,13 +34,24 @@ def client_fixture(session: Session):
     app.dependency_overrides.clear()
 
 
-@pytest.fixture(name="client")
-def normal_user_token_headers(client: TestClient, session: get_session):
+@pytest.fixture(name="normal_user_token_headers")
+def normal_user_token_headers(client: client_fixture, session: session_fixture):
 
     """Get a valid JWT token for request"""
 
     return authentication_token_from_email(
-        client=client,
+        session,
+        client,
         email=settings.TEST_USER_EMAIL,
-        session=session,
+        password=settings.TEST_USER_PASSWORD,
+    )
+
+
+@pytest.fixture(name="admin_token_headers")
+def admin_token_headers(client: client_fixture, session: session_fixture):
+
+    """Get a valid JWT token for request"""
+
+    return authentication_token_from_email(
+        session, client, email=settings.ADMIN_EMAIL, password=settings.ADMIN_PASSWORD
     )
