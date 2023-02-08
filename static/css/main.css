@@ -2,3 +2,8 @@
 a.nounderline {text-decoration: none; }
 
 h1,h2,h3,h4,h5,h6 {font-family:serif; letter-spacing:3px}
+
+/* mouse over link */
+a:hover {
+  color: teal;
+}
