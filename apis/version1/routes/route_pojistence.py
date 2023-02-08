@@ -66,7 +66,7 @@ def get_pojistence(*, session: Session = Depends(get_session), pojistenec_id: in
     return pojistenec
 
 
-@router.patch("/pojistenec/uprava/{pojistenec_id}", response_model=ZobrazPojistence)
+@router.patch("/pojistenec/uprava/{pojistenec_id}")
 async def upravit_pojistence(
     pojistenec_id: int,
     pojistenec: UpravPojistence,
