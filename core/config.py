@@ -26,6 +26,9 @@ class Settings:
     ALGORITHM = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES = 60
     TEST_USER_EMAIL = "test@example.com"
+    TEST_USER_PASSWORD = "randompassword"
+    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 settings = Settings()
