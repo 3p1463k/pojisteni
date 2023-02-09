@@ -31,7 +31,7 @@ $ . venv/bin/activate
 
 ### Naklonujeme repo
 ```
-git clone https://github.com/3p1463k/pojisteni.git
+git clone https://github.com/3p1463k/pojisteni
 ```
 
 ## Konfigurace Nginx

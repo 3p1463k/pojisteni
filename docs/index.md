@@ -1,4 +1,4 @@
-# Pojisteni Intro
+# Pojisteni pro ITnetwork
 
 Aplikace vyuziva tyto nastroje:
 

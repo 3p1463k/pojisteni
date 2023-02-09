@@ -86,7 +86,7 @@ class VytvorUdalost(UdalostBase):
 
     pass
 ```
-## ZobrazUdalost
+### ZobrazUdalost
 ```py
 class ZobrazUdalost(Udalost):
 
@@ -94,7 +94,7 @@ class ZobrazUdalost(Udalost):
 
     pass
 ```
-## UpravUdalost
+### UpravUdalost
 ```py
 class UpravUdalost(SQLModel):
 
