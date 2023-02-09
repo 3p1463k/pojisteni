@@ -15,9 +15,6 @@ from admin.admin_config import PojisteniAdmin
 from admin.admin_config import UdalostAdmin
 from apis.base import api_router
 from core.config import settings
-from db.models.pojistenec import Pojistenec
-from db.models.pojisteni import Pojisteni
-from db.models.udalost import Udalost
 from db.session import create_db_and_tables
 from db.session import engine
 from static.script.exceptions import exception_handlers
@@ -25,9 +22,6 @@ from static.script.vytvor_polozky_db import vytvor_dummy_pojistence
 from static.script.vytvor_polozky_db import vytvor_dummy_pojisteni
 from static.script.vytvor_polozky_db import zadej_admina
 from webapps.base import api_router as web_app_router
-
-# from db.base import Base
-# from static.script.vytvor_polozky_db import over_admina
 
 
 def include_router(app):
@@ -53,13 +47,11 @@ def start_application():
         exception_handlers=exception_handlers,
     )
 
-    print("addding sqladmin to /admin")
     authentication_backend = AdminAuthBackend(secret_key=settings.SECRET_KEY)
     admin = Admin(app, engine, authentication_backend=authentication_backend)
 
     include_router(app)
     configure_static(app)
-    print("Creating tables ... ")
     create_db_and_tables()
 
     admin.add_view(PojistenecAdmin)
@@ -67,9 +59,7 @@ def start_application():
     admin.add_view(UdalostAdmin)
     admin.add_view(DruhPojisteniAdmin)
 
-    zadej_admina()
-    # # over_admina()
-
+    # zadej_admina()
     vytvor_dummy_pojistence()
     vytvor_dummy_pojisteni()
 
