@@ -23,16 +23,16 @@ list_pojistencu = [
     ),
     VytvorPojistence(
         jmeno="Dalsi",
-        prijmeni="User",
+        prijmeni="Uzivatel",
         ulice="Nejaka 1",
         mesto="Jakesi",
         psc=123560,
         telefon=1542560,
-        email="dalsi@example.com",
+        email="dalsi@test.com",
         password="silneheslo",
     ),
     VytvorPojistence(
-        jmeno="Mirek",
+        jmeno="Hned",
         prijmeni="Skocdopole",
         ulice="Ulicni 5",
         mesto="Dolni ves",
@@ -58,7 +58,7 @@ list_pojistencu = [
         mesto="Nachod",
         psc=251239,
         telefon=5666123,
-        email="janek@example.com",
+        email="janek@unicorn.com",
         password="tvrdeheslo",
     ),
     VytvorPojistence(
@@ -72,7 +72,7 @@ list_pojistencu = [
         password="dobreheslo",
     ),
     VytvorPojistence(
-        jmeno="Hanus",
+        jmeno="John",
         prijmeni="Drtikol",
         ulice="Pod mostem 2",
         mesto="Nekde",
