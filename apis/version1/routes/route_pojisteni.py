@@ -54,19 +54,30 @@ def vytvor_pojisteni(
 
 
 @router.get("/pojisteni/{pojisteni_id}", response_model=ZobrazPojisteni)
-def get_pojisteni(*, session: Session = Depends(get_session), pojisteni_id: int):
+def get_pojisteni(
+    *,
+    session: Session = Depends(get_session),
+    pojisteni_id: int,
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
     """Nacte detail jednotliveho pojisteni"""
 
-    pojisteni = find_pojisteni(session, pojisteni_id)
+    if current_user and current_user.is_superuser:
 
-    if not pojisteni:
+        pojisteni = find_pojisteni(session, pojisteni_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojisteni s  id {pojisteni_id} neexistuje",
-        )
+        if not pojisteni:
 
-    return pojisteni
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojisteni s  id {pojisteni_id} neexistuje",
+            )
+
+        return pojisteni
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail=f"You are not permitted!!!!"
+    )
 
 
 @router.patch("/pojisteni/uprava/{pojisteni_id}")
@@ -127,20 +138,29 @@ def delete_pojisteni_admin(
 
 
 @router.get("/pojisteni/vse/", response_model=List[ZobrazPojisteni])
-def zobrazit_vsechns_pojisteni(session: Session = Depends(get_session)):
-
+def zobrazit_vsechns_pojisteni(
+    session: Session = Depends(get_session),
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
     """Zobrazi vsechna pojisteni"""
 
-    pojisteni = list_pojisteni(session=session)
+    if current_user and current_user.is_superuser:
 
-    if not pojisteni:
+        pojisteni = list_pojisteni(session=session)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Zadna pojisteni nenalezena",
-        )
+        if not pojisteni:
 
-    return pojisteni
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Zadna pojisteni nenalezena",
+            )
+
+        return pojisteni
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 # @pojisteni_router.get("/pojisteni/pojistenec/vse/", response_model=List[ZobrazPojisteni])

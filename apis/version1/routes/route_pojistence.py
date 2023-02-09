@@ -51,19 +51,31 @@ async def vytvorit_pojistence(
 
 
 @router.get("/pojistenec/{pojistenec_id}", response_model=ZobrazPojistence)
-def get_pojistence(*, session: Session = Depends(get_session), pojistenec_id: int):
+def get_pojistence(
+    *,
+    session: Session = Depends(get_session),
+    pojistenec_id: int,
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
     """Nacte pojistence"""
 
-    pojistenec = find_pojistenec(session, pojistenec_id)
+    if current_user and current_user.is_superuser:
 
-    if not pojistenec:
+        pojistenec = find_pojistenec(session, pojistenec_id)
 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
-        )
+        if not pojistenec:
 
-    return pojistenec
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pojistenec s  id {pojistenec_id} neexistuje",
+            )
+
+        return pojistenec
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
 
 
 @router.patch("/pojistenec/uprava/{pojistenec_id}")
@@ -125,10 +137,19 @@ async def vymazat_pojistence(
 
 
 @router.get("/pojistenci/vse/", response_model=List[ZobrazPojistence])
-def zobrazi_vsechny_pojistence(session: Session = Depends(get_session)):
-
+def zobrazi_vsechny_pojistence(
+    session: Session = Depends(get_session),
+    current_user: Pojistenec = Depends(get_current_user_from_token),
+):
     """Zobrazi vsechna pojisteni"""
 
-    pojistenci = list_pojistence(session)
+    if current_user and current_user.is_superuser:
 
-    return pojistenci
+        pojistenci = list_pojistence(session)
+
+        return pojistenci
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"You are not permitted!!!!",
+    )
