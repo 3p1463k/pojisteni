@@ -34,12 +34,34 @@ conda activate pojisteni
 ```
 pip install -r requirements.txt
 ```
+### Enviroment file
+
+Aby aplikace kompletne fungovala, musime vytvorit .env file a SECRET_KEY
+
+In bash terminal:
+```
+echo SECRET_KEY=12345678 >> .env
+```
 
 ### Spusteni Aplikace
 ```
 uvicorn main:app
 ```
 ![Start App](img/start1.png){ loading=lazy }
+
+Aplikace vytvori nekolik uzivatelu a nekolik druhu pojisteni jako testovaci data.
+
+Udaje k vytvorenym pojistencum jsou v adresari:
+```
+/static/data/
+```
+
+Muzete se zaregistrovat, prihlasit, vytvorit pojisteni nebo udalost.
+
+Muzete vyzkouset i admin board. Udaje k admnovi jsou v adresari:
+```
+/static/script/
+```
 
 ### Otevreme webovy prohllizec
 
