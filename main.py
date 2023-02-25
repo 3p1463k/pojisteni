@@ -60,8 +60,8 @@ def start_application():
     admin.add_view(DruhPojisteniAdmin)
 
     # zadej_admina()
-    vytvor_dummy_pojistence()
-    vytvor_dummy_pojisteni()
+    # vytvor_dummy_pojistence()
+    # vytvor_dummy_pojisteni()
 
     return app
 
