@@ -34,6 +34,21 @@ nav:
 # Configuration
 theme:
   name: material
+  palette:
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: indigo
+    accent: amber
+    toggle:
+      icon: material/weather-sunny
+      name: Ztmavit
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: indigo
+    accent: red
+    toggle:
+      icon: material/weather-night
+      name: Svetlo
 
   features:
     - navigation.footer
